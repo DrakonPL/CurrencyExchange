@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CurrencyExchange.Application.DTOs
+namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 {
-    public class WalletTransactionDto : BaseDto
+    internal class ExchangeFundsHandler
     {
     }
 }

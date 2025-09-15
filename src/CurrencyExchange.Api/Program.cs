@@ -1,3 +1,5 @@
+using CurrencyExchange.Application;
+using CurrencyExchange.Infrastructure;
 
 namespace CurrencyExchange.Api
 {
@@ -8,6 +10,8 @@ namespace CurrencyExchange.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.ConfigureApplicationServices();
+            builder.Services.ConfigureInfrastructureServices();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

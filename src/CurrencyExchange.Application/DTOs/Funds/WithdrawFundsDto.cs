@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CurrencyExchange.Application.DTOs.Funds
+﻿namespace CurrencyExchange.Application.DTOs.Funds
 {
-    internal class WithdrawFundsDto
+    public class WithdrawFundsDto
     {
+        public required int WalletId { get; set; }
+        public required string CurrencyCode { get; set; }
+        public required decimal Amount { get; set; }
     }
 }

@@ -2,8 +2,7 @@
 {
     public class FundsDto : BaseDto
     {
-        public int WalletId { get; set; }
-        public int CurrencyId { get; set; }
+        public string CurrencyCode { get; set; }
         public decimal Amount { get; set; }
     }
 }

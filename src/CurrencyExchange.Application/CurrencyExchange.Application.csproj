@@ -16,4 +16,8 @@
     <ProjectReference Include="..\CurrencyExchange.Domain\CurrencyExchange.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Funds\Queries\" />
+  </ItemGroup>
+
 </Project>

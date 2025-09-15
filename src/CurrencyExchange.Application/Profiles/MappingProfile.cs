@@ -11,9 +11,14 @@ namespace CurrencyExchange.Application.Profiles
         public MappingProfile()
         {
             CreateMap<Currency, CurrencyDto>().ReverseMap();
+
+
             CreateMap<Wallet, WalletDto>().ReverseMap();
-            CreateMap<Funds, FundsDto>().ReverseMap();
-            CreateMap<WalletTransaction, WalletTransactionDto>().ReverseMap();
+
+
+            CreateMap<Funds, FundsDto>()
+                .ForMember(dest => dest.CurrencyCode, opt => opt.MapFrom(src => src.Currency.Code))
+                .ReverseMap();
         }
     }
 }
