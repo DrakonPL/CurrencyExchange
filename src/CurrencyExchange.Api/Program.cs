@@ -1,3 +1,4 @@
+using CurrencyExchange.Api.Middlewares;
 using CurrencyExchange.Application;
 using CurrencyExchange.Infrastructure;
 using Microsoft.OpenApi.Models;
@@ -18,6 +19,7 @@ namespace CurrencyExchange.Api
             builder.Services.AddFluentValidationAutoValidation();
 
             builder.Services.AddControllers();
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
@@ -31,6 +33,8 @@ namespace CurrencyExchange.Api
 
             var app = builder.Build();
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -43,12 +47,8 @@ namespace CurrencyExchange.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

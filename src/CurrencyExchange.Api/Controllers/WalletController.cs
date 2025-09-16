@@ -29,24 +29,35 @@ namespace CurrencyExchange.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<WalletDto>> CreateWallet([FromBody] CreateWalletDto walletDto)
         {
             return Ok(await _mediator.Send(new CreateWalletCommand(walletDto)));
         }
 
         [HttpPost("deposit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<FundsDto>> DepositFunds([FromBody] DepositFundsDto fundsDto)
         {
             return Ok(await _mediator.Send(new DepositFundsCommand(fundsDto)));
         }
 
         [HttpPost("withdraw")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<FundsDto>> WithdrawFunds([FromBody] WithdrawFundsDto fundsDto)
         {
             return Ok(await _mediator.Send(new WithdrawFundsCommand(fundsDto)));
         }
 
         [HttpPost("exchange")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<FundsDto>> ExchangeFunds([FromBody] ExchangeFundsDto fundsDto)
         {
             return Ok(await _mediator.Send(new ExchangeFundsCommand(fundsDto)));

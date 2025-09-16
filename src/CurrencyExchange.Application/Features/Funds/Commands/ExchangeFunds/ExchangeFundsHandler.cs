@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CurrencyExchange.Application.Contracts;
 using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.DTOs.Funds.Validators;
-using FluentValidation;
+using CurrencyExchange.Application.Exceptions;
+using CurrencyExchange.Application.Interfaces;
 using MediatR;
 
 namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
@@ -10,21 +10,12 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
     public class ExchangeFundsHandler(
         IWalletRepository walletRepository,
         ICurrencyRepository currencyRepository,
+        ICurrencyConverter currencyConverter,
         IMapper mapper
         ) : IRequestHandler<ExchangeFundsCommand, FundsDto>
     {
         public async Task<FundsDto> Handle(ExchangeFundsCommand request, CancellationToken cancellationToken)
         {
-            
-            //var validator = new ExchangeFundsDtoValidator(walletRepository, currencyRepository);
-            //var validationResult = await validator.ValidateAsync(request.ExchangeFundsDto);
-
-            //if (!validationResult.IsValid)
-            //{
-            //    throw new ValidationException(validationResult.Errors);
-            //}
-
-
             var wallet = await walletRepository.Get(request.ExchangeFundsDto.WalletId);
             var fromCurrency = await currencyRepository.GetByCode(request.ExchangeFundsDto.FromCurrencyCode);
             var toCurrency = await currencyRepository.GetByCode(request.ExchangeFundsDto.ToCurrencyCode);
@@ -33,17 +24,18 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 
             if (funds == null || funds.Amount < request.ExchangeFundsDto.Amount)
             {
-                throw new ValidationException("Insufficient funds in the source currency.");
+                throw new BadRequestException("Insufficient funds in the source currency.");
             }
 
             //withdraw funds from the source currency
             funds.Amount -= request.ExchangeFundsDto.Amount;
 
-            //wymień na PLN
-            decimal plnFunds = request.ExchangeFundsDto.Amount * fromCurrency.Rate;
-
-            //wymień na docelową walutę
-            decimal exchangedAmount = plnFunds / toCurrency.Rate;
+            var exchangedAmount = await currencyConverter.Convert(
+                fromCurrency.Code,
+                toCurrency.Code,
+                request.ExchangeFundsDto.Amount,
+                cancellationToken
+            );
 
             //check if the wallet already has funds in the target currency
             var targetFunds = wallet.Funds.FirstOrDefault(f => f.CurrencyId == toCurrency.Id);

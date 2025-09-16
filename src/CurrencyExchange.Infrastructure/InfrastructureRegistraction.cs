@@ -1,6 +1,5 @@
 ﻿using CurrencyExchange.Application.Contracts;
 using CurrencyExchange.Infrastructure.Repositories;
-using CurrencyExchange.Infrastructure.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,10 +21,6 @@ namespace CurrencyExchange.Infrastructure
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<ICurrencyRepository, CurrencyRepository>();
             services.AddScoped<IFundsRepository, FundsRepository>();
-
-
-            //services.AddHttpClient<NbpClient>(c => c.BaseAddress = new Uri("https://api.nbp.pl"));
-            //services.AddHostedService<RatesWorker>();
 
             return services;
         }

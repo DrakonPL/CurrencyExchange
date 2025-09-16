@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CurrencyExchange.Application.Contracts;
 using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.DTOs.Funds.Validators;
 using FluentValidation;
 using MediatR;
 
@@ -15,14 +14,6 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds
     {
         public async Task<FundsDto> Handle(WithdrawFundsCommand request, CancellationToken cancellationToken)
         {
-            //var validator = new WithdrawFundsDtoValidator(walletRepository);
-            //var validationResult = await validator.ValidateAsync(request.WithdrawFundsDto);
-
-            //if (!validationResult.IsValid)
-            //{
-            //    throw new ValidationException(validationResult.Errors);
-            //}
-
             var wallet = await walletRepository.Get(request.WithdrawFundsDto.WalletId);
             var currency = await currencyRepository.GetByCode(request.WithdrawFundsDto.CurrencyCode);
 

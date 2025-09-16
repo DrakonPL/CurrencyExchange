@@ -3,7 +3,7 @@ using CurrencyExchange.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace CurrencyExchange.Infrastructure.Worker
+namespace CurrencyExchange.Application.Worker
 {
     public class RatesWorker : BackgroundService
     {

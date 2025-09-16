@@ -1,7 +1,6 @@
-﻿using CurrencyExchange.Application.Worker;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 
-namespace CurrencyExchange.Infrastructure.Worker
+namespace CurrencyExchange.Application.Worker
 {
     public class NbpClient
     {
