@@ -6,10 +6,8 @@ using CurrencyExchange.Application.Services;
 using CurrencyExchange.Domain.Entities;
 using CurrencyExchange.Infrastructure;
 using CurrencyExchange.Infrastructure.Repositories;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Xml.Linq;
 
 namespace CurrencyExchange.UnitTests
 {

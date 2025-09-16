@@ -5,7 +5,7 @@ namespace CurrencyExchange.Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly CurrencyExchangeDbContext _context;
+        protected readonly CurrencyExchangeDbContext _context;
 
         public GenericRepository(CurrencyExchangeDbContext context)
         {

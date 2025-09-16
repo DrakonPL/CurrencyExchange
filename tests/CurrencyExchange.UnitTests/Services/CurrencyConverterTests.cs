@@ -3,10 +3,9 @@ using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Services
 {
-    public class CurrencyConverterTests : IClassFixture<TestFixture>
+    public class CurrencyConverterTests(TestFixture fx) : IClassFixture<TestFixture>
     {
-        private readonly TestFixture _fx;
-        public CurrencyConverterTests(TestFixture fx) => _fx = fx;
+        private readonly TestFixture _fx = fx;
 
         [Fact]
         public async Task Convert_SameCurrency_ReturnsSameAmount()

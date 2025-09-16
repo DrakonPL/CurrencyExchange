@@ -8,7 +8,7 @@ namespace CurrencyExchange.Infrastructure.Repositories
     {
         public override async Task<Wallet> Get(int id)
         {
-            return await context.Wallets
+            return await _context.Wallets
                 .Include(w => w.Funds)
                 .ThenInclude(f => f.Currency)
                 .FirstOrDefaultAsync(w => w.Id == id);
@@ -16,7 +16,7 @@ namespace CurrencyExchange.Infrastructure.Repositories
 
         public override async Task<IReadOnlyList<Wallet>> GetAll()
         {
-            return await context.Wallets
+            return await _context.Wallets
                 .Include(w => w.Funds)
                 .ThenInclude(f => f.Currency)
                 .ToListAsync();
