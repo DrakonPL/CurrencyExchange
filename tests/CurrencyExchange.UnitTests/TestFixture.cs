@@ -1,0 +1,93 @@
+﻿using AutoMapper;
+using CurrencyExchange.Application.Contracts;
+using CurrencyExchange.Application.Interfaces;
+using CurrencyExchange.Application.Profiles;
+using CurrencyExchange.Application.Services;
+using CurrencyExchange.Domain.Entities;
+using CurrencyExchange.Infrastructure;
+using CurrencyExchange.Infrastructure.Repositories;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Xml.Linq;
+
+namespace CurrencyExchange.UnitTests
+{
+    public class TestFixture
+    {
+        private static readonly ILoggerFactory _loggerFactory =
+        LoggerFactory.Create(builder =>
+            builder
+                .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Information));
+
+
+        public CurrencyExchangeDbContext Context { get; }
+        public IWalletRepository WalletRepository { get; }
+        public ICurrencyRepository CurrencyRepository { get; }
+        public IFundsRepository FundsRepository { get; }
+        public ICurrencyConverter CurrencyConverter { get; }
+        public IMapper Mapper { get; }
+
+        public TestFixture()
+        {
+            var options = new DbContextOptionsBuilder<CurrencyExchangeDbContext>()
+                .UseInMemoryDatabase("test")
+                .Options;
+
+            Context = new CurrencyExchangeDbContext(options);
+            Context.Database.EnsureCreated();
+
+            CurrencyRepository = new CurrencyRepository(Context);
+            WalletRepository = new WalletRepository(Context);
+            FundsRepository = new FundsRepository(Context);
+
+            var mapperCfg = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<MappingProfile>();
+            }, _loggerFactory);
+
+
+            Mapper = mapperCfg.CreateMapper();
+
+            CurrencyConverter = new CurrencyConverter(CurrencyRepository);
+
+            SeedBaseCurrencies();
+        }
+
+        private void SeedBaseCurrencies()
+        {
+            // PLN as base (rate 1), plus USD/EUR sample (NBP logic assumes mid rate to PLN)
+            AddCurrency("PLN", "Polish Zloty", 1m);
+            AddCurrency("USD", "US Dollar", 4.00m);
+            AddCurrency("EUR", "Euro", 4.40m);
+            Context.SaveChanges();
+        }
+
+        public Currency AddCurrency(string code, string name, decimal rate)
+        {
+            var c = new Currency { Code = code, Name = name, Rate = rate };
+            Context.Currencies.Add(c);
+            return c;
+        }
+
+        public Wallet AddWallet(string name)
+        {
+            var w = new Wallet { Name = name };
+            Context.Wallets.Add(w);
+            Context.SaveChanges();
+            return w;
+        }
+
+        public void AddFunds(Wallet wallet, string currencyCode, decimal amount)
+        {
+            var currency = Context.Currencies.First(c => c.Code == currencyCode);
+            wallet.Funds.Add(new Funds { CurrencyId = currency.Id, Currency = currency, Amount = amount });
+            Context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            Context.Dispose();
+        }
+    }
+}

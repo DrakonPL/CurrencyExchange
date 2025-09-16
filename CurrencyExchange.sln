@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyExchange.Application", "src\CurrencyExchange.Application\CurrencyExchange.Application.csproj", "{6D99CF9F-3931-4EA8-B981-FBE6CB16E2FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyExchange.Infrastructure", "src\CurrencyExchange.Infrastructure\CurrencyExchange.Infrastructure.csproj", "{81ADB2AE-4C73-4C2A-BB03-6AA1582AEDC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyExchange.UnitTests", "tests\CurrencyExchange.UnitTests\CurrencyExchange.UnitTests.csproj", "{136339CE-62B7-4C47-8E8D-90711C50A74E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{81ADB2AE-4C73-4C2A-BB03-6AA1582AEDC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81ADB2AE-4C73-4C2A-BB03-6AA1582AEDC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81ADB2AE-4C73-4C2A-BB03-6AA1582AEDC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{136339CE-62B7-4C47-8E8D-90711C50A74E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{136339CE-62B7-4C47-8E8D-90711C50A74E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{136339CE-62B7-4C47-8E8D-90711C50A74E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{136339CE-62B7-4C47-8E8D-90711C50A74E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{B7C21FD8-560F-4B2D-B5BE-5443C00D645F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{6D99CF9F-3931-4EA8-B981-FBE6CB16E2FA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{81ADB2AE-4C73-4C2A-BB03-6AA1582AEDC8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{136339CE-62B7-4C47-8E8D-90711C50A74E} = {9E7A7529-16A6-490C-9BF8-796F8685BA56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2793D19D-E67E-44DB-96C8-EBA2A83E4D38}
