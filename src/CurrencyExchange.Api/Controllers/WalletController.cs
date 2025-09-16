@@ -1,6 +1,7 @@
 ﻿using CurrencyExchange.Application.DTOs.Funds;
 using CurrencyExchange.Application.DTOs.Wallet;
 using CurrencyExchange.Application.Features.Funds.Commands.DepositFunds;
+using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
 using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
 using CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet;
 using CurrencyExchange.Application.Features.Wallet.Queries.GetAllWallets;
@@ -43,6 +44,12 @@ namespace CurrencyExchange.Api.Controllers
         public async Task<ActionResult<FundsDto>> WithdrawFunds([FromBody] WithdrawFundsDto fundsDto)
         {
             return Ok(await _mediator.Send(new WithdrawFundsCommand(fundsDto)));
+        }
+
+        [HttpPost("exchange")]
+        public async Task<ActionResult<FundsDto>> ExchangeFunds([FromBody] ExchangeFundsDto fundsDto)
+        {
+            return Ok(await _mediator.Send(new ExchangeFundsCommand(fundsDto)));
         }
     }
 }

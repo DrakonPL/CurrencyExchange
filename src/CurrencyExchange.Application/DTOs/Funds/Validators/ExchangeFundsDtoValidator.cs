@@ -25,19 +25,19 @@ namespace CurrencyExchange.Application.DTOs.Funds.Validators
                 .WithErrorCode("404")
                 .WithMessage("Wallet does not exist.");
 
-            RuleFor(p => p.FromCurrencyId)
-                .MustAsync(async (currencyId, cancellation) =>
+            RuleFor(p => p.FromCurrencyCode)
+                .MustAsync(async (currencyCode, cancellation) =>
                 {
-                    var currency = await _currencyRepository.Get(currencyId);
+                    var currency = await _currencyRepository.GetByCode(currencyCode);
                     return currency != null;
                 })
                 .WithErrorCode("404")
                 .WithMessage("Currency does not exist.");
 
-            RuleFor(p => p.ToCurrencyId)
-                .MustAsync(async (currencyId, cancellation) =>
+            RuleFor(p => p.ToCurrencyCode)
+                .MustAsync(async (currencyCode, cancellation) =>
                 {
-                    var currency = await _currencyRepository.Get(currencyId);
+                    var currency = await _currencyRepository.GetByCode(currencyCode);
                     return currency != null;
                 })
                 .WithErrorCode("404")

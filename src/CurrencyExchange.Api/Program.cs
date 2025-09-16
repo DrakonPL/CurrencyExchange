@@ -1,5 +1,7 @@
 using CurrencyExchange.Application;
 using CurrencyExchange.Infrastructure;
+using Microsoft.OpenApi.Models;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace CurrencyExchange.Api
 {
@@ -13,10 +15,19 @@ namespace CurrencyExchange.Api
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureInfrastructureServices();
 
+            builder.Services.AddFluentValidationAutoValidation();
+
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "CurrencyExchange API",
+                    Version = "v1",
+                    Description = "API for wallet currency exchange operations."
+                });
+            });
 
             var app = builder.Build();
 
@@ -24,7 +35,11 @@ namespace CurrencyExchange.Api
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CurrencyExchange API v1");
+                    c.DisplayRequestDuration();
+                });
             }
 
             app.UseHttpsRedirection();

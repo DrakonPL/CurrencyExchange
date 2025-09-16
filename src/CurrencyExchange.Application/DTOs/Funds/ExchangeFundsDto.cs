@@ -2,9 +2,9 @@
 {
     public class ExchangeFundsDto
     {
-        public int WalletId { get; set; }
-        public int FromCurrencyId { get; set; }
-        public int ToCurrencyId { get; set; }
-        public decimal Amount { get; set; }
+        public required int WalletId { get; set; }
+        public required string FromCurrencyCode { get; set; }
+        public required string ToCurrencyCode { get; set; }
+        public required decimal Amount { get; set; }
     }
 }

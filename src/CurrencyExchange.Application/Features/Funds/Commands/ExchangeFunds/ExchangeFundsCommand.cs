@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CurrencyExchange.Application.DTOs.Funds;
+using MediatR;
 
 namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 {
-    internal class ExchangeFundsCommand
-    {
-    }
+    public record ExchangeFundsCommand(ExchangeFundsDto ExchangeFundsDto) : IRequest<FundsDto>;
 }

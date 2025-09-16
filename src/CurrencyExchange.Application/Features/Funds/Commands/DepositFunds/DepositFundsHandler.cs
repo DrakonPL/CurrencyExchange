@@ -15,18 +15,18 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.DepositFunds
     {
         public async Task<FundsDto> Handle(DepositFundsCommand request, CancellationToken cancellationToken)
         {
-            var validator  = new DepositFundsDtoValidator(walletRepository, currencyRepository);
-            var validationResult = await validator.ValidateAsync(request.DepositFundsDto);
+            //var validator  = new DepositFundsDtoValidator(walletRepository, currencyRepository);
+            //var validationResult = await validator.ValidateAsync(request.DepositFundsDto);
 
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
+            //if (!validationResult.IsValid)
+            //{
+            //    throw new ValidationException(validationResult.Errors);
+            //}
 
             var wallet = await walletRepository.Get(request.DepositFundsDto.WalletId);
             var currency = await currencyRepository.GetByCode(request.DepositFundsDto.CurrencyCode);
 
-            var funds = wallet.Funds.Where(f => f.CurrencyId == currency.Id).FirstOrDefault();
+            var funds = wallet.Funds.FirstOrDefault(f => f.CurrencyId == currency.Id);
 
             if (funds != null)
             {
