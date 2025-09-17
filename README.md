@@ -69,7 +69,6 @@ dotnet test
 Tests use InMemory provider (see [`TestFixture`](tests/CurrencyExchange.UnitTests/TestFixture.cs)) and cover handlers + validators + currency conversion.
 
 ## Future Improvements (optional)
-- Add GET /Wallet/{id}
 - Add paging
 - Add optimistic concurrency on funds
 - Add seeding or base PLN currency guarantee
