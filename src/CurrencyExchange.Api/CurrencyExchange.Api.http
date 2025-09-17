@@ -1,6 +1,57 @@
-@CurrencyExchange.Api_HostAddress = http://localhost:5045
+@httpHost = http://localhost:5045
+@httpsHost = https://localhost:7039
 
-GET {{CurrencyExchange.Api_HostAddress}}/weatherforecast/
+### Get all currencies
+GET {{httpHost}}/Currency
 Accept: application/json
 
-###
+### Create a wallet
+POST {{httpHost}}/Wallet
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Demo Wallet"
+}
+
+### List all wallets
+GET {{httpHost}}/Wallet
+Accept: application/json
+
+### Deposit funds (walletId must exist; currencyCode must exist)
+POST {{httpHost}}/Wallet/deposit
+Content-Type: application/json
+Accept: application/json
+
+{
+  "walletId": 1,
+  "currencyCode": "USD",
+  "amount": 100
+}
+
+### Withdraw funds
+POST {{httpHost}}/Wallet/withdraw
+Content-Type: application/json
+Accept: application/json
+
+{
+  "walletId": 1,
+  "currencyCode": "USD",
+  "amount": 25
+}
+
+### Exchange funds (USD -> EUR)
+POST {{httpHost}}/Wallet/exchange
+Content-Type: application/json
+Accept: application/json
+
+{
+  "walletId": 1,
+  "fromCurrencyCode": "USD",
+  "toCurrencyCode": "EUR",
+  "amount": 50
+}
+
+### (Optional) Switch to HTTPS host
+GET {{httpsHost}}/Currency
+Accept: application/json
