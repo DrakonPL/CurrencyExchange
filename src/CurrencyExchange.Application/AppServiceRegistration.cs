@@ -15,8 +15,8 @@ namespace CurrencyExchange.Application
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            //services.AddHttpClient<NbpClient>(c => c.BaseAddress = new Uri("https://api.nbp.pl"));
-            //services.AddHostedService<RatesWorker>();
+            services.AddHttpClient<NbpClient>(c => c.BaseAddress = new Uri("https://api.nbp.pl"));
+            services.AddHostedService<RatesWorker>();
 
             services.AddScoped<ICurrencyConverter, CurrencyConverter>();
 
