@@ -1,6 +1,5 @@
 ﻿using CurrencyExchange.Application.Contracts;
 using CurrencyExchange.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CurrencyExchange.Infrastructure
@@ -9,13 +8,7 @@ namespace CurrencyExchange.Infrastructure
     {
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services)
         {
-            services.AddDbContext<CurrencyExchangeDbContext>(opts =>
-            {
-                var dbPath = System.IO.Path.Join(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "CurrencyExchange.db");
-                opts.UseSqlite($"Data Source={dbPath}");
-            });
+            services.AddDbContext<CurrencyExchangeDbContext>();
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IWalletRepository, WalletRepository>();

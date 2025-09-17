@@ -4,15 +4,13 @@ using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Dto
 {
-    public class ExchangeFundsDtoValidatorTests
+    public class ExchangeFundsDtoValidatorTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
-        private readonly TestFixture _fx = new();
-
         [Fact]
         public async Task WalletNotFound_Fails404()
         {
             // arrange
-            var v = new ExchangeFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { WalletId = 9999, FromCurrencyCode = "USD", ToCurrencyCode = "EUR", Amount = 10m };
 
             // act
@@ -27,8 +25,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task FromCurrencyMissing_Fails404()
         {
             // arrange
-            var wallet = _fx.AddWallet("WX1");
-            var v = new ExchangeFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var wallet = testFixture.AddWallet("WX1");
+            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { WalletId = wallet.Id, FromCurrencyCode = "XXX", ToCurrencyCode = "EUR", Amount = 10m };
 
             // act
@@ -43,8 +41,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task ToCurrencyMissing_Fails404()
         {
             // arrange
-            var wallet = _fx.AddWallet("WX2");
-            var v = new ExchangeFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var wallet = testFixture.AddWallet("WX2");
+            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { WalletId = wallet.Id, FromCurrencyCode = "USD", ToCurrencyCode = "ZZZ", Amount = 10m };
 
             // act
@@ -59,8 +57,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task NonPositiveAmount_Fails()
         {
             // arrange
-            var wallet = _fx.AddWallet("WX3");
-            var v = new ExchangeFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var wallet = testFixture.AddWallet("WX3");
+            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { WalletId = wallet.Id, FromCurrencyCode = "USD", ToCurrencyCode = "EUR", Amount = 0m };
 
             // act
@@ -74,8 +72,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task Valid_Passes()
         {
             // arrange
-            var wallet = _fx.AddWallet("WX4");
-            var v = new ExchangeFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var wallet = testFixture.AddWallet("WX4");
+            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { WalletId = wallet.Id, FromCurrencyCode = "USD", ToCurrencyCode = "EUR", Amount = 15.5m };
 
             // act

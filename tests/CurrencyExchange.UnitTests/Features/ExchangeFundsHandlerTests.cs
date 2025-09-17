@@ -1,27 +1,24 @@
 ﻿using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.Exceptions;
 using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
+using CurrencyExchange.Common.Exceptions;
 using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Features
 {
-    public class ExchangeFundsHandlerTests : IClassFixture<TestFixture>
+    public class ExchangeFundsHandlerTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
-        private readonly TestFixture _fx;
-        public ExchangeFundsHandlerTests(TestFixture fx) => _fx = fx;
-
         [Fact]
         public async Task Exchange_Insufficient_Throws()
         {
             // arrange
-            var wallet = _fx.AddWallet("E1");
-            _fx.AddFunds(wallet, "USD", 5m);
+            var wallet = testFixture.AddWallet("E1");
+            testFixture.AddFunds(wallet, "USD", 5m);
 
             var handler = new ExchangeFundsHandler(
-                _fx.WalletRepository,
-                _fx.CurrencyRepository,
-                _fx.CurrencyConverter,
-                _fx.Mapper);
+                testFixture.WalletRepository,
+                testFixture.CurrencyRepository,
+                testFixture.CurrencyConverter,
+                testFixture.Mapper);
 
             var dto = new ExchangeFundsDto
             {
@@ -39,14 +36,14 @@ namespace CurrencyExchange.UnitTests.Features
         public async Task Exchange_NewTargetCurrency_CreatesFunds()
         {
             // arrange
-            var wallet = _fx.AddWallet("E2");
-            _fx.AddFunds(wallet, "USD", 100m);
+            var wallet = testFixture.AddWallet("E2");
+            testFixture.AddFunds(wallet, "USD", 100m);
 
             var handler = new ExchangeFundsHandler(
-                _fx.WalletRepository,
-                _fx.CurrencyRepository,
-                _fx.CurrencyConverter,
-                _fx.Mapper);
+                testFixture.WalletRepository,
+                testFixture.CurrencyRepository,
+                testFixture.CurrencyConverter,
+                testFixture.Mapper);
 
             var dto = new ExchangeFundsDto
             {
@@ -70,15 +67,15 @@ namespace CurrencyExchange.UnitTests.Features
         public async Task Exchange_ExistingTarget_Increments()
         {
             // arrange
-            var wallet = _fx.AddWallet("E3");
-            _fx.AddFunds(wallet, "USD", 200m);
-            _fx.AddFunds(wallet, "EUR", 10m);
+            var wallet = testFixture.AddWallet("E3");
+            testFixture.AddFunds(wallet, "USD", 200m);
+            testFixture.AddFunds(wallet, "EUR", 10m);
 
             var handler = new ExchangeFundsHandler(
-                _fx.WalletRepository,
-                _fx.CurrencyRepository,
-                _fx.CurrencyConverter,
-                _fx.Mapper);
+                testFixture.WalletRepository,
+                testFixture.CurrencyRepository,
+                testFixture.CurrencyConverter,
+                testFixture.Mapper);
 
             var dto = new ExchangeFundsDto
             {

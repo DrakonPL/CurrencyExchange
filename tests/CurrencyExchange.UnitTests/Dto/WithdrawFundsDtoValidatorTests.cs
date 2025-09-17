@@ -4,15 +4,14 @@ using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Dto
 {
-    public class WithdrawFundsDtoValidatorTests
+    public class WithdrawFundsDtoValidatorTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
-        private readonly TestFixture _fx = new();
 
         [Fact]
         public async Task WalletNotFound_FailsWith404()
         {
             // arrange
-            var v = new WithdrawFundsDtoValidator(_fx.WalletRepository);
+            var v = new WithdrawFundsDtoValidator(testFixture.WalletRepository);
             var dto = new WithdrawFundsDto { WalletId = 9999, CurrencyCode = "USD", Amount = 10m };
 
             // act
@@ -27,8 +26,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task NonPositiveAmount_Fails()
         {
             // arrange
-            var wallet = _fx.AddWallet("W1");
-            var v = new WithdrawFundsDtoValidator(_fx.WalletRepository);
+            var wallet = testFixture.AddWallet("W1");
+            var v = new WithdrawFundsDtoValidator(testFixture.WalletRepository);
             var dto = new WithdrawFundsDto { WalletId = wallet.Id, CurrencyCode = "USD", Amount = 0m };
 
             // act
@@ -42,8 +41,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task Valid_Passes()
         {
             // arrange
-            var wallet = _fx.AddWallet("W2");
-            var v = new WithdrawFundsDtoValidator(_fx.WalletRepository);
+            var wallet = testFixture.AddWallet("W2");
+            var v = new WithdrawFundsDtoValidator(testFixture.WalletRepository);
             var dto = new WithdrawFundsDto { WalletId = wallet.Id, CurrencyCode = "USD", Amount = 5m };
 
             // act

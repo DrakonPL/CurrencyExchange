@@ -16,22 +16,7 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.DepositFunds
             var wallet = await walletRepository.Get(request.DepositFundsDto.WalletId);
             var currency = await currencyRepository.GetByCode(request.DepositFundsDto.CurrencyCode);
 
-            var funds = wallet.Funds.FirstOrDefault(f => f.CurrencyId == currency.Id);
-
-            if (funds != null)
-            {
-                funds.Amount += request.DepositFundsDto.Amount;
-            }
-            else
-            {
-                funds = new Domain.Entities.Funds
-                {
-                    CurrencyId = currency.Id,
-                    Amount = request.DepositFundsDto.Amount
-                };
-
-                wallet.Funds.Add(funds);
-            }
+            var funds = wallet.DepositFunds(currency, request.DepositFundsDto.Amount);
 
             await walletRepository.Update(wallet);
             return mapper.Map<FundsDto>(funds);

@@ -5,15 +5,13 @@ using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Dto
 {
-    public class DepositFundsDtoValidatorTests : IClassFixture<TestFixture>
+    public class DepositFundsDtoValidatorTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
-        private readonly TestFixture _fx = new();
-
         [Fact]
         public async Task WalletNotFound_Fails404()
         {
             // arrange
-            var v = new DepositFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var v = new DepositFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new DepositFundsDto { WalletId = 9999, CurrencyCode = "USD", Amount = 10m };
 
             // act
@@ -28,8 +26,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task CurrencyNotFound_Fails404()
         {
             // arrange
-            var wallet = _fx.AddWallet("DV1");
-            var v = new DepositFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var wallet = testFixture.AddWallet("DV1");
+            var v = new DepositFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new DepositFundsDto { WalletId = wallet.Id, CurrencyCode = "XXX", Amount = 10m };
 
             // act
@@ -44,8 +42,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task NonPositiveAmount_Fails()
         {
             // arrange
-            var wallet = _fx.AddWallet("DV2");
-            var v = new DepositFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var wallet = testFixture.AddWallet("DV2");
+            var v = new DepositFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new DepositFundsDto { WalletId = wallet.Id, CurrencyCode = "USD", Amount = 0m };
 
             // act
@@ -59,8 +57,8 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task Valid_Passes()
         {
             // arrange
-            var wallet = _fx.AddWallet("DV3");
-            var v = new DepositFundsDtoValidator(_fx.WalletRepository, _fx.CurrencyRepository);
+            var wallet = testFixture.AddWallet("DV3");
+            var v = new DepositFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
             var dto = new DepositFundsDto { WalletId = wallet.Id, CurrencyCode = "USD", Amount = 25m };
 
             // act

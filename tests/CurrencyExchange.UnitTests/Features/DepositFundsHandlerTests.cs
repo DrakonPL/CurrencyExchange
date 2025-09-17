@@ -4,17 +4,14 @@ using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Features
 {
-    public class DepositFundsHandlerTests : IClassFixture<TestFixture>
+    public class DepositFundsHandlerTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
-        private readonly TestFixture _fx;
-        public DepositFundsHandlerTests(TestFixture fx) => _fx = fx;
-
         [Fact]
         public async Task Deposit_NewCurrency_AddsFunds()
         {
             // arrange
-            var wallet = _fx.AddWallet("A");
-            var handler = new DepositFundsHandler(_fx.WalletRepository, _fx.CurrencyRepository, _fx.Mapper);
+            var wallet = testFixture.AddWallet("A");
+            var handler = new DepositFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper);
             var dto = new DepositFundsDto { WalletId = wallet.Id, CurrencyCode = "USD", Amount = 50m };
 
             // act
@@ -29,10 +26,10 @@ namespace CurrencyExchange.UnitTests.Features
         public async Task Deposit_ExistingCurrency_IncrementsAmount()
         {
             // arrange
-            var wallet = _fx.AddWallet("B");
-            _fx.AddFunds(wallet, "USD", 20m);
+            var wallet = testFixture.AddWallet("B");
+            testFixture.AddFunds(wallet, "USD", 20m);
 
-            var handler = new DepositFundsHandler(_fx.WalletRepository, _fx.CurrencyRepository, _fx.Mapper);
+            var handler = new DepositFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper);
             var dto = new DepositFundsDto { WalletId = wallet.Id, CurrencyCode = "USD", Amount = 30m };
 
             // act
