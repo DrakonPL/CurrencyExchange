@@ -12,7 +12,7 @@ namespace CurrencyExchange.Application.Features.Wallet.Queries.GetWallet
     {
         public async Task<WalletDto> Handle(GetWalletQuery request, CancellationToken cancellationToken)
         {
-            var wallet = await walletRepository.Get(request.Id);
+            var wallet = await walletRepository.Get(request.GetWalletDto.Id);
             return mapper.Map<WalletDto>(wallet);
         }
     }

@@ -29,7 +29,7 @@ namespace CurrencyExchange.UnitTests
         public TestFixture()
         {
             var options = new DbContextOptionsBuilder<CurrencyExchangeDbContext>()
-                .UseInMemoryDatabase("test")
+                .UseInMemoryDatabase($"test_{Guid.NewGuid()}")
                 .Options;
 
             Context = new CurrencyExchangeDbContext(options);

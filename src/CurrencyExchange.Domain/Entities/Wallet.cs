@@ -21,6 +21,7 @@ namespace CurrencyExchange.Domain.Entities
                 funds = new Funds
                 {
                     CurrencyId = currency.Id,
+                    Currency = currency,
                     Amount = amount
                 };
 

@@ -4,13 +4,13 @@ using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Dto
 {
-    public class CreateWalletDtoValidatorTests
+    public class CreateWalletDtoValidatorTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
         [Fact]
         public async Task EmptyName_Fails()
         {
             // arrange
-            var v = new CreateWalletDtoValidator();
+            var v = new CreateWalletDtoValidator(testFixture.WalletRepository);
             var dto = new CreateWalletDto { Name = "" };
 
             // act
@@ -24,7 +24,7 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task TooLongName_Fails()
         {
             // arrange
-            var v = new CreateWalletDtoValidator();
+            var v = new CreateWalletDtoValidator(testFixture.WalletRepository);
             var dto = new CreateWalletDto { Name = new string('x', 101) };
 
             // act
@@ -38,7 +38,7 @@ namespace CurrencyExchange.UnitTests.Dto
         public async Task ValidName_Passes()
         {
             // arrange
-            var v = new CreateWalletDtoValidator();
+            var v = new CreateWalletDtoValidator(testFixture.WalletRepository);
             var dto = new CreateWalletDto { Name = "My Wallet" };
 
             // act

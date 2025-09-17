@@ -5,6 +5,7 @@ using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
 using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
 using CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet;
 using CurrencyExchange.Application.Features.Wallet.Queries.GetAllWallets;
+using CurrencyExchange.Application.Features.Wallet.Queries.GetWallet;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,13 @@ namespace CurrencyExchange.Api.Controllers
         public async Task<ActionResult<IReadOnlyList<WalletDto>>> GetAll()
         {
             var wallets = await _mediator.Send(new GetAllWalletsQuery());
+            return Ok(wallets);
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<WalletDto>> GetWallet(int id)
+        {
+            var wallets = await _mediator.Send(new GetWalletQuery(new GetWalletDto { Id = id}));
             return Ok(wallets);
         }
 

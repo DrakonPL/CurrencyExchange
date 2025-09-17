@@ -21,5 +21,13 @@ namespace CurrencyExchange.Infrastructure.Repositories
                 .ThenInclude(f => f.Currency)
                 .ToListAsync();
         }
+
+        public async Task<Wallet> GetByName(string name)
+        {
+            return await _context.Wallets
+                .Include(w => w.Funds)
+                .ThenInclude(f => f.Currency)
+                .FirstOrDefaultAsync(w => w.Name == name);
+        }
     }
 }

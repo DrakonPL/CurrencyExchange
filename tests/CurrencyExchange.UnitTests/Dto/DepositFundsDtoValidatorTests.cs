@@ -2,7 +2,6 @@
 using CurrencyExchange.Application.DTOs.Funds.Validators;
 using Shouldly;
 
-
 namespace CurrencyExchange.UnitTests.Dto
 {
     public class DepositFundsDtoValidatorTests(TestFixture testFixture) : IClassFixture<TestFixture>

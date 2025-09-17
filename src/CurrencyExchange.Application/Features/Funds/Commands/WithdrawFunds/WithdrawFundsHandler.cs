@@ -16,10 +16,10 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds
             var wallet = await walletRepository.Get(request.WithdrawFundsDto.WalletId);
             var currency = await currencyRepository.GetByCode(request.WithdrawFundsDto.CurrencyCode);
 
-            var funds = wallet.WithdrawFunds(currency, request.WithdrawFundsDto.Amount);
+            var fundsLeft = wallet.WithdrawFunds(currency, request.WithdrawFundsDto.Amount);
             await walletRepository.Update(wallet);
 
-            return mapper.Map<FundsDto>(funds);
+            return mapper.Map<FundsDto>(fundsLeft);
         }
     }
 }
