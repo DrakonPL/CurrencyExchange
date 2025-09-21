@@ -16,14 +16,14 @@ namespace CurrencyExchange.Application.DTOs.Funds.Validators
             RuleFor(p => p.Amount)
                 .GreaterThan(0).WithMessage("Amount must be greater than zero.");
 
-            RuleFor(p => p.WalletId)
-                .MustAsync(async (walletId, cancellation) =>
-                {
-                    var wallet = await _walletRepository.Get(walletId);
-                    return wallet != null;
-                })
-                .WithErrorCode("404")
-                .WithMessage("Wallet does not exist.");
+            //RuleFor(p => p.WalletId)
+            //    .MustAsync(async (walletId, cancellation) =>
+            //    {
+            //        var wallet = await _walletRepository.Get(walletId);
+            //        return wallet != null;
+            //    })
+            //    .WithErrorCode("404")
+            //    .WithMessage("Wallet does not exist.");
 
             RuleFor(p => p.FromCurrencyCode)
                 .MustAsync(async (currencyCode, cancellation) =>

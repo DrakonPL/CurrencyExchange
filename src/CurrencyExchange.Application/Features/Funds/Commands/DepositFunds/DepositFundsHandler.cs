@@ -13,7 +13,7 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.DepositFunds
     {
         public async Task<FundsDto> Handle(DepositFundsCommand request, CancellationToken cancellationToken)
         {
-            var wallet = await walletRepository.Get(request.DepositFundsDto.WalletId);
+            var wallet = await walletRepository.Get(request.Id);
             var currency = await currencyRepository.GetByCode(request.DepositFundsDto.CurrencyCode);
 
             var funds = wallet.DepositFunds(currency, request.DepositFundsDto.Amount);

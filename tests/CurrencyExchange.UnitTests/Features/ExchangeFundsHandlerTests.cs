@@ -22,14 +22,13 @@ namespace CurrencyExchange.UnitTests.Features
 
             var dto = new ExchangeFundsDto
             {
-                WalletId = wallet.Id,
                 FromCurrencyCode = "USD",
                 ToCurrencyCode = "EUR",
                 Amount = 50m
             };
 
             await Should.ThrowAsync<BadRequestException>(() =>
-                handler.Handle(new ExchangeFundsCommand(dto), CancellationToken.None));
+                handler.Handle(new ExchangeFundsCommand(wallet.Id, dto), CancellationToken.None));
         }
 
         [Fact]
@@ -47,14 +46,13 @@ namespace CurrencyExchange.UnitTests.Features
 
             var dto = new ExchangeFundsDto
             {
-                WalletId = wallet.Id,
                 FromCurrencyCode = "USD",
                 ToCurrencyCode = "EUR",
                 Amount = 40m
             };
 
             // act
-            var result = await handler.Handle(new ExchangeFundsCommand(dto), CancellationToken.None);
+            var result = await handler.Handle(new ExchangeFundsCommand(wallet.Id, dto), CancellationToken.None);
 
             // assert
             result.CurrencyCode.ShouldBe("EUR");
@@ -79,14 +77,13 @@ namespace CurrencyExchange.UnitTests.Features
 
             var dto = new ExchangeFundsDto
             {
-                WalletId = wallet.Id,
                 FromCurrencyCode = "USD",
                 ToCurrencyCode = "EUR",
                 Amount = 100m
             };
 
             // act
-            var result = await handler.Handle(new ExchangeFundsCommand(dto), CancellationToken.None);
+            var result = await handler.Handle(new ExchangeFundsCommand(wallet.Id, dto), CancellationToken.None);
 
             // assert
             // 100 USD -> PLN 400 -> EUR ≈ 90.9091 added -> total ≈ 100.9091

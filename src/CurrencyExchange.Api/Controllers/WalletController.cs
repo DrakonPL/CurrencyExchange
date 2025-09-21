@@ -29,7 +29,7 @@ namespace CurrencyExchange.Api.Controllers
             return Ok(wallets);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<WalletDto>> GetWallet(int id)
         {
             var wallets = await _mediator.Send(new GetWalletQuery(new GetWalletDto { Id = id}));
@@ -44,31 +44,31 @@ namespace CurrencyExchange.Api.Controllers
             return Ok(await _mediator.Send(new CreateWalletCommand(walletDto)));
         }
 
-        [HttpPost("deposit")]
+        [HttpPost("{id}/deposit")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<FundsDto>> DepositFunds([FromBody] DepositFundsDto fundsDto)
+        public async Task<ActionResult<FundsDto>> DepositFunds(int id,[FromBody] DepositFundsDto fundsDto)
         {
-            return Ok(await _mediator.Send(new DepositFundsCommand(fundsDto)));
+            return Ok(await _mediator.Send(new DepositFundsCommand(id, fundsDto)));
         }
 
-        [HttpPost("withdraw")]
+        [HttpPost("{id}/withdraw")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<FundsDto>> WithdrawFunds([FromBody] WithdrawFundsDto fundsDto)
+        public async Task<ActionResult<FundsDto>> WithdrawFunds(int id,[FromBody] WithdrawFundsDto fundsDto)
         {
-            return Ok(await _mediator.Send(new WithdrawFundsCommand(fundsDto)));
+            return Ok(await _mediator.Send(new WithdrawFundsCommand(id, fundsDto)));
         }
 
-        [HttpPost("exchange")]
+        [HttpPost("{id}/exchange")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<FundsDto>> ExchangeFunds([FromBody] ExchangeFundsDto fundsDto)
+        public async Task<ActionResult<FundsDto>> ExchangeFunds(int id,[FromBody] ExchangeFundsDto fundsDto)
         {
-            return Ok(await _mediator.Send(new ExchangeFundsCommand(fundsDto)));
+            return Ok(await _mediator.Send(new ExchangeFundsCommand(id, fundsDto)));
         }
     }
 }

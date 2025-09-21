@@ -29,11 +29,11 @@ Entities: [`Currency`](src/CurrencyExchange.Domain/Entities/Currency.cs) (Code, 
 Base route style: /{ControllerName}
 - GET /Currency → list all currencies
 - GET /Wallet → list all wallets with funds
+- GET /Wallet/{id} → get wallet by id
 - POST /Wallet (body: { "name": "My Wallet" }) → creates wallet (returns new id)
-- POST /Wallet/deposit (body: { walletId, currencyCode, amount })
-- POST /Wallet/withdraw (body: { walletId, currencyCode, amount })
-- POST /Wallet/exchange (body: { walletId, fromCurrencyCode, toCurrencyCode, amount })
-(There is a query handler [`CurrencyExchange.Application.Features.Wallet.Queries.GetWallet.GetWalletHandler`](src/CurrencyExchange.Application/Features/Wallet/Queries/GetWallet/GetWalletHandler.cs) but no GET /Wallet/{id} endpoint yet.)
+- POST /Wallet/{id}/deposit (body: { "currencyCode": "USD", "amount": 100 })
+- POST /Wallet/{id}/withdraw (body: { "currencyCode": "USD", "amount": 25 })
+- POST /Wallet/{id}/exchange (body: { "fromCurrencyCode": "USD", "toCurrencyCode": "EUR", "amount": 50 })
 
 Sample requests file: [src/CurrencyExchange.Api/CurrencyExchange.Api.http](src/CurrencyExchange.Api/CurrencyExchange.Api.http)
 

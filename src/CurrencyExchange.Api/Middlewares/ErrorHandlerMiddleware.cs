@@ -3,14 +3,9 @@ using System.Text.Json;
 
 namespace CurrencyExchange.Api.Middlewares
 {
-    public class ErrorHandlerMiddleware
+    public class ErrorHandlerMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public ErrorHandlerMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        private readonly RequestDelegate _next = next;
 
         public async Task Invoke(HttpContext context)
         {

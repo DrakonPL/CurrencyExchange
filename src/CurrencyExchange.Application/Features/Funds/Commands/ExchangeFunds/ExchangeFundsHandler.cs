@@ -15,7 +15,7 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
     {
         public async Task<FundsDto> Handle(ExchangeFundsCommand request, CancellationToken cancellationToken)
         {
-            var wallet = await walletRepository.Get(request.ExchangeFundsDto.WalletId);
+            var wallet = await walletRepository.Get(request.Id);
             var fromCurrency = await currencyRepository.GetByCode(request.ExchangeFundsDto.FromCurrencyCode);
             var toCurrency = await currencyRepository.GetByCode(request.ExchangeFundsDto.ToCurrencyCode);
 

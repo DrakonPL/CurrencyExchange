@@ -15,10 +15,10 @@ namespace CurrencyExchange.UnitTests.Features
             testFixture.AddFunds(wallet, "USD", 100m);
 
             var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper);
-            var dto = new WithdrawFundsDto { WalletId = wallet.Id, CurrencyCode = "USD", Amount = 40m };
+            var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 40m };
 
             // act
-            var result = await handler.Handle(new WithdrawFundsCommand(dto), CancellationToken.None);
+            var result = await handler.Handle(new WithdrawFundsCommand(wallet.Id, dto), CancellationToken.None);
 
             // assert
             result.Amount.ShouldBe(60m);
@@ -32,11 +32,11 @@ namespace CurrencyExchange.UnitTests.Features
             testFixture.AddFunds(wallet, "USD", 10m);
 
             var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper);
-            var dto = new WithdrawFundsDto { WalletId = wallet.Id, CurrencyCode = "USD", Amount = 25m };
+            var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 25m };
 
             // assert
             await Should.ThrowAsync<BadRequestException>(() =>
-                handler.Handle(new WithdrawFundsCommand(dto), CancellationToken.None));
+                handler.Handle(new WithdrawFundsCommand(wallet.Id, dto), CancellationToken.None));
         }
     }
 }

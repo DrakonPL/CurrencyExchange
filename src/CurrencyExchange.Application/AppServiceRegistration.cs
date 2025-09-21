@@ -1,4 +1,5 @@
-﻿using CurrencyExchange.Application.Interfaces;
+﻿using CurrencyExchange.Application.Behaviors;
+using CurrencyExchange.Application.Interfaces;
 using CurrencyExchange.Application.Services;
 using CurrencyExchange.Application.Worker;
 using FluentValidation;
@@ -12,7 +13,11 @@ namespace CurrencyExchange.Application
         public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
         {
             services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
+                    .AddOpenBehavior(typeof(ValidationBehavior<,>))
+
+            );
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.AddHttpClient<NbpClient>(c => c.BaseAddress = new Uri("https://api.nbp.pl"));

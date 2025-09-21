@@ -3,5 +3,5 @@ using MediatR;
 
 namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 {
-    public record ExchangeFundsCommand(ExchangeFundsDto ExchangeFundsDto) : IRequest<FundsDto>;
+    public record ExchangeFundsCommand(int Id, ExchangeFundsDto ExchangeFundsDto) : IRequest<FundsDto>;
 }

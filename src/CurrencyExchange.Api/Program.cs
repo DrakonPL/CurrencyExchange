@@ -2,7 +2,6 @@ using CurrencyExchange.Api.Middlewares;
 using CurrencyExchange.Application;
 using CurrencyExchange.Infrastructure;
 using Microsoft.OpenApi.Models;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace CurrencyExchange.Api
 {
@@ -15,8 +14,6 @@ namespace CurrencyExchange.Api
             // Add services to the container.
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureInfrastructureServices();
-
-            builder.Services.AddFluentValidationAutoValidation();
 
             builder.Services.AddControllers();
 

@@ -18,35 +18,36 @@ Accept: application/json
 GET {{httpHost}}/Wallet
 Accept: application/json
 
-### Deposit funds (walletId must exist; currencyCode must exist)
-POST {{httpHost}}/Wallet/deposit
+### Get a wallet by id
+GET {{httpHost}}/Wallet/1
+Accept: application/json
+
+### Deposit funds (wallet id in route; currencyCode must exist)
+POST {{httpHost}}/Wallet/1/deposit
 Content-Type: application/json
 Accept: application/json
 
 {
-  "walletId": 1,
   "currencyCode": "USD",
   "amount": 100
 }
 
 ### Withdraw funds
-POST {{httpHost}}/Wallet/withdraw
+POST {{httpHost}}/Wallet/1/withdraw
 Content-Type: application/json
 Accept: application/json
 
 {
-  "walletId": 1,
   "currencyCode": "USD",
   "amount": 25
 }
 
 ### Exchange funds (USD -> EUR)
-POST {{httpHost}}/Wallet/exchange
+POST {{httpHost}}/Wallet/1/exchange
 Content-Type: application/json
 Accept: application/json
 
 {
-  "walletId": 1,
   "fromCurrencyCode": "USD",
   "toCurrencyCode": "EUR",
   "amount": 50
