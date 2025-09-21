@@ -16,6 +16,7 @@ namespace CurrencyExchange.Api
             builder.Services.ConfigureInfrastructureServices();
 
             builder.Services.AddControllers();
+            builder.Services.AddMemoryCache();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>

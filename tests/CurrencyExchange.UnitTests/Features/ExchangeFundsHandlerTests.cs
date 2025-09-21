@@ -18,7 +18,8 @@ namespace CurrencyExchange.UnitTests.Features
                 testFixture.WalletRepository,
                 testFixture.CurrencyRepository,
                 testFixture.CurrencyConverter,
-                testFixture.Mapper);
+                testFixture.Mapper,
+                testFixture.MemoryCache);
 
             var dto = new ExchangeFundsDto
             {
@@ -42,7 +43,8 @@ namespace CurrencyExchange.UnitTests.Features
                 testFixture.WalletRepository,
                 testFixture.CurrencyRepository,
                 testFixture.CurrencyConverter,
-                testFixture.Mapper);
+                testFixture.Mapper,
+                testFixture.MemoryCache);
 
             var dto = new ExchangeFundsDto
             {
@@ -73,7 +75,8 @@ namespace CurrencyExchange.UnitTests.Features
                 testFixture.WalletRepository,
                 testFixture.CurrencyRepository,
                 testFixture.CurrencyConverter,
-                testFixture.Mapper);
+                testFixture.Mapper,
+                testFixture.MemoryCache);
 
             var dto = new ExchangeFundsDto
             {

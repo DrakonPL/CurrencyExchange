@@ -12,7 +12,7 @@ namespace CurrencyExchange.UnitTests.Features
         public async Task CreateWallet_Succeeds_ReturnsId()
         {
             // arrange
-            var handler = new CreateWalletHandler(testFixture.WalletRepository);
+            var handler = new CreateWalletHandler(testFixture.WalletRepository, testFixture.MemoryCache);
             var dto = new CreateWalletDto { Name = "My Wallet" };
 
             // act

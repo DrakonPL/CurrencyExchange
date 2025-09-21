@@ -1,19 +1,15 @@
-﻿using CurrencyExchange.Application.Contracts;
+﻿using CurrencyExchange.Application.Common;
+using CurrencyExchange.Application.Contracts;
 using CurrencyExchange.Domain.Entities;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace CurrencyExchange.Application.Worker
 {
-    public class RatesWorker : BackgroundService
+    public class RatesWorker(IServiceScopeFactory scopeFactory, IMemoryCache memoryCache) : BackgroundService
     {
-        private readonly IServiceScopeFactory _scopeFactory;
         private readonly TimeSpan _interval = TimeSpan.FromHours(4);
-
-        public RatesWorker(IServiceScopeFactory scopeFactory)
-        {
-            _scopeFactory = scopeFactory;
-        }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -29,7 +25,7 @@ namespace CurrencyExchange.Application.Worker
 
         private async Task FetchOnce(CancellationToken ct)
         {
-            using var scope = _scopeFactory.CreateScope();
+            using var scope = scopeFactory.CreateScope();
             var nbpClient = scope.ServiceProvider.GetRequiredService<NbpClient>();
             var currencyRepository = scope.ServiceProvider.GetRequiredService<ICurrencyRepository>();
 
@@ -58,6 +54,8 @@ namespace CurrencyExchange.Application.Worker
                         }
                     }
                 }
+
+                memoryCache.Remove(CacheKeys.CurrenciesAll);
             }
             catch (Exception ex)
             {

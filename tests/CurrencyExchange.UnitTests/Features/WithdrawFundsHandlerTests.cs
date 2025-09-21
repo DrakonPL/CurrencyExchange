@@ -14,7 +14,7 @@ namespace CurrencyExchange.UnitTests.Features
             var wallet = testFixture.AddWallet("W1");
             testFixture.AddFunds(wallet, "USD", 100m);
 
-            var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper);
+            var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
             var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 40m };
 
             // act
@@ -31,7 +31,7 @@ namespace CurrencyExchange.UnitTests.Features
             var wallet = testFixture.AddWallet("W2");
             testFixture.AddFunds(wallet, "USD", 10m);
 
-            var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper);
+            var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
             var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 25m };
 
             // assert

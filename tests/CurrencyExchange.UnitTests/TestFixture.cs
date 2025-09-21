@@ -7,6 +7,7 @@ using CurrencyExchange.Domain.Entities;
 using CurrencyExchange.Infrastructure;
 using CurrencyExchange.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace CurrencyExchange.UnitTests
@@ -25,6 +26,7 @@ namespace CurrencyExchange.UnitTests
         public IFundsRepository FundsRepository { get; }
         public ICurrencyConverter CurrencyConverter { get; }
         public IMapper Mapper { get; }
+        public IMemoryCache MemoryCache { get; }
 
         public TestFixture()
         {
@@ -46,6 +48,8 @@ namespace CurrencyExchange.UnitTests
 
 
             Mapper = mapperCfg.CreateMapper();
+
+            MemoryCache = new MemoryCache(new MemoryCacheOptions());
 
             CurrencyConverter = new CurrencyConverter(CurrencyRepository);
 
