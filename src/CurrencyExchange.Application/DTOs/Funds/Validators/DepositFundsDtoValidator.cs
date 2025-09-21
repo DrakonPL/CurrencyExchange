@@ -5,25 +5,14 @@ namespace CurrencyExchange.Application.DTOs.Funds.Validators
 {
     public class DepositFundsDtoValidator : AbstractValidator<DepositFundsDto>
     {
-        private readonly IWalletRepository _walletRepository;
         private readonly ICurrencyRepository _currencyRepository;
 
-        public DepositFundsDtoValidator(IWalletRepository walletRepository, ICurrencyRepository currencyRepository)
+        public DepositFundsDtoValidator(ICurrencyRepository currencyRepository)
         {
-            _walletRepository = walletRepository;
             _currencyRepository = currencyRepository;
 
             RuleFor(p => p.Amount)
                 .GreaterThan(0).WithMessage("Amount must be greater than zero.");
-
-            //RuleFor(p => p.WalletId)
-            //    .MustAsync(async (walletId, cancellation) =>
-            //    {
-            //        var wallet = await _walletRepository.Get(walletId);
-            //        return wallet != null;
-            //    })
-            //    .WithErrorCode("404")
-            //    .WithMessage("Wallet does not exist.");
 
             RuleFor(p => p.CurrencyCode)
                 .MustAsync(async (currencyCode, cancellation) =>

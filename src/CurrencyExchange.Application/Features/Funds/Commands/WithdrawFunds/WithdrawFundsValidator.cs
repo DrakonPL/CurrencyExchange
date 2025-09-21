@@ -14,7 +14,7 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds
                 .WithMessage("Wallet does not exist.");
 
             RuleFor(x => x.WithdrawFundsDto)
-                .SetValidator(new WithdrawFundsDtoValidator(walletRepository));
+                .SetValidator(new WithdrawFundsDtoValidator());
         }
     }
 }

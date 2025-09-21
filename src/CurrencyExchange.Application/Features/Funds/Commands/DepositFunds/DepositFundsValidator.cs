@@ -14,7 +14,7 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.DepositFunds
                 .WithMessage("Wallet does not exist.");
 
             RuleFor(x => x.DepositFundsDto)
-                .SetValidator(new DepositFundsDtoValidator(walletRepository, currencyRepository));
+                .SetValidator(new DepositFundsDtoValidator(currencyRepository));
         }
     }
 }

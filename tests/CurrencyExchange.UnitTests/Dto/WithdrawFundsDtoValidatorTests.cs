@@ -11,7 +11,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("W1");
-            var v = new WithdrawFundsDtoValidator(testFixture.WalletRepository);
+            var v = new WithdrawFundsDtoValidator();
             var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 0m };
 
             // act
@@ -26,7 +26,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("W2");
-            var v = new WithdrawFundsDtoValidator(testFixture.WalletRepository);
+            var v = new WithdrawFundsDtoValidator();
             var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 5m };
 
             // act

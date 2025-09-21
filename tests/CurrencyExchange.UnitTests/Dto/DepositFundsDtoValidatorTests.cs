@@ -11,7 +11,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("DV1");
-            var v = new DepositFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new DepositFundsDtoValidator(testFixture.CurrencyRepository);
             var dto = new DepositFundsDto { CurrencyCode = "XXX", Amount = 10m };
 
             // act
@@ -27,7 +27,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("DV2");
-            var v = new DepositFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new DepositFundsDtoValidator(testFixture.CurrencyRepository);
             var dto = new DepositFundsDto { CurrencyCode = "USD", Amount = 0m };
 
             // act
@@ -42,7 +42,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("DV3");
-            var v = new DepositFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new DepositFundsDtoValidator(testFixture.CurrencyRepository);
             var dto = new DepositFundsDto { CurrencyCode = "USD", Amount = 25m };
 
             // act

@@ -11,7 +11,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("WX1");
-            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new ExchangeFundsDtoValidator(testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { FromCurrencyCode = "XXX", ToCurrencyCode = "EUR", Amount = 10m };
 
             // act
@@ -27,7 +27,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("WX2");
-            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new ExchangeFundsDtoValidator(testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { FromCurrencyCode = "USD", ToCurrencyCode = "ZZZ", Amount = 10m };
 
             // act
@@ -43,7 +43,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("WX3");
-            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new ExchangeFundsDtoValidator(testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { FromCurrencyCode = "USD", ToCurrencyCode = "EUR", Amount = 0m };
 
             // act
@@ -58,7 +58,7 @@ namespace CurrencyExchange.UnitTests.Dto
         {
             // arrange
             var wallet = testFixture.AddWallet("WX4");
-            var v = new ExchangeFundsDtoValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new ExchangeFundsDtoValidator(testFixture.CurrencyRepository);
             var dto = new ExchangeFundsDto { FromCurrencyCode = "USD", ToCurrencyCode = "EUR", Amount = 15.5m };
 
             // act

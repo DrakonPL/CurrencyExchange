@@ -6,6 +6,6 @@
         public const string WalletsAll = "wallets:all";
         public static string WalletById(int id) => $"wallets:{id}";
 
-        public static TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
+        public static TimeSpan CacheDuration { get; } = TimeSpan.FromMinutes(5);
     }
 }

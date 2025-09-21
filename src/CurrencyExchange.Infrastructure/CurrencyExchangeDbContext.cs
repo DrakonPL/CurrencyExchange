@@ -20,12 +20,12 @@ namespace CurrencyExchange.Infrastructure
 
         // The following configures EF to create a Sqlite database file in the
         // special "local" folder for your platform.
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!options.IsConfigured)
+            if (!optionsBuilder.IsConfigured)
             {
                 // Fallback only when no provider supplied (e.g. normal app runtime)
-                options.UseSqlite($"Data Source={DbPath}");
+                optionsBuilder.UseSqlite($"Data Source={DbPath}");
             }
         }
     }
