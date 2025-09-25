@@ -1,9 +1,9 @@
-﻿using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
+﻿using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
 using CurrencyExchange.Common.Exceptions;
+using CurrencyExchange.Domain.Exceptions;
 using Shouldly;
 
-namespace CurrencyExchange.UnitTests.Features
+namespace CurrencyExchange.UnitTests.Features.Funds
 {
     public class WithdrawFundsHandlerTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
@@ -15,10 +15,9 @@ namespace CurrencyExchange.UnitTests.Features
             testFixture.AddFunds(wallet, "USD", 100m);
 
             var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
-            var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 40m };
 
             // act
-            var result = await handler.Handle(new WithdrawFundsCommand(wallet.Id, dto), CancellationToken.None);
+            var result = await handler.Handle(new WithdrawFundsCommand(wallet.Id, "USD", 40m), CancellationToken.None);
 
             // assert
             result.Amount.ShouldBe(60m);
@@ -32,11 +31,10 @@ namespace CurrencyExchange.UnitTests.Features
             testFixture.AddFunds(wallet, "USD", 10m);
 
             var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
-            var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 25m };
 
             // assert
-            await Should.ThrowAsync<BadRequestException>(() =>
-                handler.Handle(new WithdrawFundsCommand(wallet.Id, dto), CancellationToken.None));
+            await Should.ThrowAsync<DomainValidationException>(() =>
+                handler.Handle(new WithdrawFundsCommand(wallet.Id, "USD", 25m), CancellationToken.None));
         }
     }
 }

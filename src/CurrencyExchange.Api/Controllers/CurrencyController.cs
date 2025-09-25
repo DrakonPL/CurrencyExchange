@@ -1,5 +1,5 @@
-﻿using CurrencyExchange.Application.DTOs;
-using CurrencyExchange.Application.Features.Currency.Queries.GetAllCurrencies;
+﻿using CurrencyExchange.Application.Features.Currency.Queries.GetAllCurrencies;
+using CurrencyExchange.Contracts.Currency;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,10 +17,11 @@ namespace CurrencyExchange.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<CurrencyDto>>> GetAll()
+        public async Task<ActionResult<IReadOnlyList<CurrencyResponse>>> GetAll()
         {
-            var wallets = await _mediator.Send(new GetAllCurrenciesQuery());
-            return Ok(wallets);
+            var rates = await _mediator.Send(new GetAllCurrenciesQuery());
+            var response = rates.Select(r => new CurrencyResponse(r.Code, r.Name, r.Rate)).ToList();
+            return Ok(response);
         }
     }
 }

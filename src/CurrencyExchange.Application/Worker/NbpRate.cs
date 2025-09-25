@@ -1,4 +1,10 @@
-﻿namespace CurrencyExchange.Application.Worker
+﻿using System.Text.Json.Serialization;
+
+namespace CurrencyExchange.Application.Worker
 {
-    public record NbpRate(string currency, string code, decimal mid);
+    public record NbpRate(
+        [property: JsonPropertyName("currency")] string Currency,
+        [property: JsonPropertyName("code")] string Code,
+        [property: JsonPropertyName("mid")] decimal Mid
+    );
 }

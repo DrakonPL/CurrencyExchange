@@ -28,12 +28,15 @@ namespace CurrencyExchange.Infrastructure.Repositories
 
         public virtual async Task<T> Get(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _context.Set<T>()
+                .FindAsync(id);
         }
 
         public virtual async Task<IReadOnlyList<T>> GetAll()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _context.Set<T>()
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task Update(T entity)

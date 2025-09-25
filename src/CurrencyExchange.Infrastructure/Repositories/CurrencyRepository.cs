@@ -8,7 +8,8 @@ namespace CurrencyExchange.Infrastructure.Repositories
     {
         public async Task<Currency> GetByCode(string code)
         {
-            return await _context.Currencies.FirstOrDefaultAsync(c => c.Code == code);
+            return await _context.Currencies
+                .FirstOrDefaultAsync(c => c.Code == code);
         }
     }
 }

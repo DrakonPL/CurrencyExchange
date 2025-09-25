@@ -1,8 +1,7 @@
-﻿using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
+﻿using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
 using Shouldly;
 
-namespace CurrencyExchange.UnitTests.Features
+namespace CurrencyExchange.UnitTests.Features.Funds
 {
     public class WithdrawFundsValidatorTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
@@ -11,15 +10,14 @@ namespace CurrencyExchange.UnitTests.Features
         {
             // arrange
             var v = new WithdrawFundsValidator(testFixture.WalletRepository);
-            var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 10m };
-            var cmd = new WithdrawFundsCommand(123456, dto);
+            var cmd = new WithdrawFundsCommand(123456, "USD", 10m);
 
             // act
             var result = await v.ValidateAsync(cmd);
 
             // assert
             result.IsValid.ShouldBeFalse();
-            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "Id");
+            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "WalletId");
         }
 
         [Fact]
@@ -28,8 +26,7 @@ namespace CurrencyExchange.UnitTests.Features
             // arrange
             var wallet = testFixture.AddWallet("WV-CMD-1");
             var v = new WithdrawFundsValidator(testFixture.WalletRepository);
-            var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 0m };
-            var cmd = new WithdrawFundsCommand(wallet.Id, dto);
+            var cmd = new WithdrawFundsCommand(wallet.Id, "USD", 0m);
 
             // act
             var result = await v.ValidateAsync(cmd);
@@ -44,8 +41,7 @@ namespace CurrencyExchange.UnitTests.Features
             // arrange
             var wallet = testFixture.AddWallet("WV-CMD-OK");
             var v = new WithdrawFundsValidator(testFixture.WalletRepository);
-            var dto = new WithdrawFundsDto { CurrencyCode = "USD", Amount = 5m };
-            var cmd = new WithdrawFundsCommand(wallet.Id, dto);
+            var cmd = new WithdrawFundsCommand(wallet.Id, "USD", 5m);
 
             // act
             var result = await v.ValidateAsync(cmd);

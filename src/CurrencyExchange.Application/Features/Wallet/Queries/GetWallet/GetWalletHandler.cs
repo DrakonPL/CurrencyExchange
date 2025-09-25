@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CurrencyExchange.Application.Common;
 using CurrencyExchange.Application.Contracts;
-using CurrencyExchange.Application.DTOs.Wallet;
+using CurrencyExchange.Application.DTOs;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -15,11 +15,11 @@ namespace CurrencyExchange.Application.Features.Wallet.Queries.GetWallet
     {
         public async Task<WalletDto> Handle(GetWalletQuery request, CancellationToken cancellationToken)
         {
-            var walletDto = await memoryCache.GetOrCreateAsync(CacheKeys.WalletById(request.GetWalletDto.Id), async entry =>
+            var walletDto = await memoryCache.GetOrCreateAsync(CacheKeys.WalletById(request.Id), async entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = CacheKeys.CacheDuration;
 
-                var wallet = await walletRepository.Get(request.GetWalletDto.Id);
+                var wallet = await walletRepository.Get(request.Id);
                 return mapper.Map<WalletDto>(wallet);
             });
 

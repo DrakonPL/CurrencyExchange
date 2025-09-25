@@ -1,29 +1,51 @@
 # CurrencyExchange
 
-Minimal wallet-based currency exchange API (.NET 8, EF Core Sqlite, MediatR, AutoMapper, FluentValidation).
+Minimal wallet-based currency exchange API (.NET 8, EF Core Sqlite, MediatR, AutoMapper, FluentValidation, BackgroundService).
 
 ## Architecture
 Projects:
 - Api: HTTP layer + Swagger + error middleware ([src/CurrencyExchange.Api](src/CurrencyExchange.Api))
-- Application: CQRS (MediatR), DTOs, validation, background rates worker
-- Infrastructure: EF Core repositories, Sqlite context
-- Domain: Entities (Wallet, Funds, Currency)
-- Common: Shared exceptions
-- UnitTests: In-memory tests
+- Application: CQRS (MediatR), DTOs, validators, background rates worker ([src/CurrencyExchange.Application](src/CurrencyExchange.Application))
+- Infrastructure: EF Core repositories, Sqlite context ([src/CurrencyExchange.Infrastructure](src/CurrencyExchange.Infrastructure))
+- Domain: Entities (Wallet, Funds, Currency) + domain exceptions ([src/CurrencyExchange.Domain](src/CurrencyExchange.Domain))
+- Common: Shared exceptions ([src/CurrencyExchange.Common](src/CurrencyExchange.Common))
+- Contracts: API contracts ([src/CurrencyExchange.Contracts](src/CurrencyExchange.Contracts))
+- UnitTests: In-memory tests ([tests/CurrencyExchange.UnitTests](tests/CurrencyExchange.UnitTests))
 
 Key components:
-- Controller: [`CurrencyExchange.Api.Controllers.WalletController`](src/CurrencyExchange.Api/Controllers/WalletController.cs), [`CurrencyExchange.Api.Controllers.CurrencyController`](src/CurrencyExchange.Api/Controllers/CurrencyController.cs)
-- Handlers: e.g. [`CurrencyExchange.Application.Features.Funds.Commands.DepositFunds.DepositFundsHandler`](src/CurrencyExchange.Application/Features/Funds/Commands/DepositFunds/DepositFundsHandler.cs)
+- Controllers: [`CurrencyExchange.Api.Controllers.WalletController`](src/CurrencyExchange.Api/Controllers/WalletController.cs), [`CurrencyExchange.Api.Controllers.CurrencyController`](src/CurrencyExchange.Api/Controllers/CurrencyController.cs)
+- Handlers:
+  - [`CurrencyExchange.Application.Features.Funds.Commands.DepositFunds.DepositFundsHandler`](src/CurrencyExchange.Application/Features/Funds/Commands/DepositFunds/DepositFundsHandler.cs)
+  - [`CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds.WithdrawFundsHandler`](src/CurrencyExchange.Application/Features/Funds/Commands/WithdrawFunds/WithdrawFundsHandler.cs)
+  - [`CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds.ExchangeFundsHandler`](src/CurrencyExchange.Application/Features/Funds/Commands/ExchangeFunds/ExchangeFundsHandler.cs)
+  - [`CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet.CreateWalletHandler`](src/CurrencyExchange.Application/Features/Wallet/Commands/CreateWallet/CreateWalletHandler.cs)
+  - [`CurrencyExchange.Application.Features.Wallet.Queries.GetWallet.GetWalletHandler`](src/CurrencyExchange.Application/Features/Wallet/Queries/GetWallet/GetWalletHandler.cs)
+  - [`CurrencyExchange.Application.Features.Wallet.Queries.GetAllWallets.GetAllWalletsHandler`](src/CurrencyExchange.Application/Features/Wallet/Queries/GetAllWallets/GetAllWalletsHandler.cs)
+- Validators:
+  - [`CurrencyExchange.Application.Features.Funds.Commands.DepositFunds.DepositFundsValidator`](src/CurrencyExchange.Application/Features/Funds/Commands/DepositFunds/DepositFundsValidator.cs)
+  - [`CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds.WithdrawFundsValidator`](src/CurrencyExchange.Application/Features/Funds/Commands/WithdrawFunds/WithdrawFundsValidator.cs)
+  - [`CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds.ExchangeFundsValidator`](src/CurrencyExchange.Application/Features/Funds/Commands/ExchangeFunds/ExchangeFundsValidator.cs)
+  - [`CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet.CreateWalletValidator`](src/CurrencyExchange.Application/Features/Wallet/Commands/CreateWallet/CreateWalletValidator.cs)
+  - [`CurrencyExchange.Application.Features.Wallet.Queries.GetWallet.GetWalletValidator`](src/CurrencyExchange.Application/Features/Wallet/Queries/GetWallet/GetWalletValidator.cs)
 - Rates worker: [`CurrencyExchange.Application.Worker.RatesWorker`](src/CurrencyExchange.Application/Worker/RatesWorker.cs) + [`CurrencyExchange.Application.Worker.NbpClient`](src/CurrencyExchange.Application/Worker/NbpClient.cs)
 - Conversion service: [`CurrencyExchange.Application.Services.CurrencyConverter`](src/CurrencyExchange.Application/Services/CurrencyConverter.cs)
 - DbContext: [`CurrencyExchange.Infrastructure.CurrencyExchangeDbContext`](src/CurrencyExchange.Infrastructure/CurrencyExchangeDbContext.cs)
 - Error middleware: [`CurrencyExchange.Api.Middlewares.ErrorHandlerMiddleware`](src/CurrencyExchange.Api/Middlewares/ErrorHandlerMiddleware.cs)
+- Caching keys: [`CurrencyExchange.Application.Common.CacheKeys`](src/CurrencyExchange.Application/Common/CacheKeys.cs)
 
 ## Data Model
-Entities: [`Currency`](src/CurrencyExchange.Domain/Entities/Currency.cs) (Code, Name, Rate PLN-based), [`Wallet`](src/CurrencyExchange.Domain/Entities/Wallet.cs) (Id, Name, Funds), [`Funds`](src/CurrencyExchange.Domain/Entities/Funds.cs) (CurrencyId, Amount). All currency conversion assumes PLN as implicit base: amount_in_target = (amount * from.Rate) / to.Rate.
+Entities:
+- [`Currency`](src/CurrencyExchange.Domain/Entities/Currency.cs) (Code, Name, Rate; PLN-based mid rate)
+- [`Wallet`](src/CurrencyExchange.Domain/Entities/Wallet.cs) (Id, Name, Funds; domain methods for deposit/withdraw with validation)
+- [`Funds`](src/CurrencyExchange.Domain/Entities/Funds.cs) (WalletId, CurrencyId, Amount; controlled mutations)
+
+All currency conversion assumes PLN as implicit base:
+$amount_{target} = \dfrac{amount \times rate_{from}}{rate_{to}}$
 
 ## Background Rates
-[`RatesWorker`](src/CurrencyExchange.Application/Worker/RatesWorker.cs) fetches NBP Table B every 4h and inserts/updates currencies via [`NbpClient`](src/CurrencyExchange.Application/Worker/NbpClient.cs). No initial seed beyond what the worker loads at startup (first run triggers immediately). Add manual seeding if you need deterministic startup currencies.
+- Runs every 4h; first run triggers on startup: [`RatesWorker`](src/CurrencyExchange.Application/Worker/RatesWorker.cs)
+- Fetches NBP Table B via [`NbpClient`](src/CurrencyExchange.Application/Worker/NbpClient.cs)
+- Configured in [`AppServiceRegistration`](src/CurrencyExchange.Application/AppServiceRegistration.cs) and reads base URL from [`appsettings.json`](src/CurrencyExchange.Api/appsettings.json) at ExternalApis:Nbp:BaseUrl
 
 ## Endpoints
 Base route style: /{ControllerName}
@@ -38,10 +60,12 @@ Base route style: /{ControllerName}
 Sample requests file: [src/CurrencyExchange.Api/CurrencyExchange.Api.http](src/CurrencyExchange.Api/CurrencyExchange.Api.http)
 
 ## Validation & Errors
-FluentValidation validators (e.g. [`DepositFundsDtoValidator`](src/CurrencyExchange.Application/DTOs/Funds/Validators/DepositFundsDtoValidator.cs)) enforce existence and positive amounts. Errors map to HTTP codes via [`ErrorHandlerMiddleware`](src/CurrencyExchange.Api/Middlewares/ErrorHandlerMiddleware.cs):
-- 400 BadRequestException / validation failures
-- 404 EntityNotFoundException (custom)
-- 500 unhandled
+- Request validation via FluentValidation; executed as MediatR pipeline: [`ValidationBehavior`](src/CurrencyExchange.Application/Behaviors/ValidationBehavior.cs)
+- Errors mapped by middleware: [`ErrorHandlerMiddleware`](src/CurrencyExchange.Api/Middlewares/ErrorHandlerMiddleware.cs)
+  - 400: [`BadRequestException`](src/CurrencyExchange.Common/Exceptions/BadRequestException.cs) or validation errors
+  - 404: [`EntityNotFoundException`](src/CurrencyExchange.Common/Exceptions/EntityNotFoundException.cs)
+  - 400 (domain rules): [`DomainValidationException`](src/CurrencyExchange.Domain/Exceptions/DomainValidationException.cs)
+- Cache invalidation on write operations via [`CacheKeys`](src/CurrencyExchange.Application/Common/CacheKeys.cs)
 
 ## Build & Run
 Restore & run API with Swagger UI:
@@ -59,35 +83,37 @@ Apply:
 ```bash
 dotnet ef database update --project src/CurrencyExchange.Infrastructure --startup-project src/CurrencyExchange.Api
 ```
-Database file stored in local app data (see [`CurrencyExchangeDbContext`](src/CurrencyExchange.Infrastructure/CurrencyExchangeDbContext.cs)).
+Database file is stored in local app data (see [`CurrencyExchangeDbContext`](src/CurrencyExchange.Infrastructure/CurrencyExchangeDbContext.cs)). Design-time factory: [`DesignTimeDbContextFactory`](src/CurrencyExchange.Infrastructure/DesignTimeDbContextFactory.cs).
 
 ## Tests
 Run unit tests:
 ```bash
 dotnet test
 ```
-Tests use InMemory provider (see [`TestFixture`](tests/CurrencyExchange.UnitTests/TestFixture.cs)) and cover handlers + validators + currency conversion.
-
-## Future Improvements (optional)
-- Add paging
-- Add optimistic concurrency on funds
-- Add seeding or base PLN currency guarantee
-- Add authentication/authorization
+Tests use the EF InMemory provider with a fixture that seeds sample currencies: [`TestFixture`](tests/CurrencyExchange.UnitTests/TestFixture.cs). Coverage includes handlers, validators, and currency conversion:
+- [`DepositFundsHandlerTests`](tests/CurrencyExchange.UnitTests/Features/Funds/DepositFundsHandlerTests.cs)
+- [`WithdrawFundsHandlerTests`](tests/CurrencyExchange.UnitTests/Features/Funds/WithdrawFundsHandlerTests.cs)
+- [`ExchangeFundsHandlerTests`](tests/CurrencyExchange.UnitTests/Features/Funds/ExchangeFundsHandlerTests.cs)
+- [`DepositFundsValidatorTests`](tests/CurrencyExchange.UnitTests/Features/Funds/DepositFundsValidatorTests.cs)
+- [`WithdrawFundsValidatorTests`](tests/CurrencyExchange.UnitTests/Features/Funds/WithdrawFundsValidatorTests.cs)
+- [`ExchangeFundsValidatorTests`](tests/CurrencyExchange.UnitTests/Features/Funds/ExchangeFundsValidatorTests.cs)
+- [`CurrencyConverterTests`](tests/CurrencyExchange.UnitTests/Services/CurrencyConverterTests.cs)
+- [`CreateWalletHandlerTests`](tests/CurrencyExchange.UnitTests/Features/Wallet/CreateWalletHandlerTests.cs)
 
 ## Quick HTTP Examples
 ```http
 POST /Wallet
 { "name": "Primary Wallet" }
 
-POST /Wallet/deposit
-{ "walletId": 1, "currencyCode": "USD", "amount": 100 }
+POST /Wallet/1/deposit
+{ "currencyCode": "USD", "amount": 100 }
 
-POST /Wallet/exchange
-{ "walletId": 1, "fromCurrencyCode": "USD", "toCurrencyCode": "EUR", "amount": 50 }
+POST /Wallet/1/exchange
+{ "fromCurrencyCode": "USD", "toCurrencyCode": "EUR", "amount": 50 }
 ```
 
 ## Tech Stack
-.NET 8, ASP.NET Core, EF Core (Sqlite), MediatR, AutoMapper, FluentValidation, Hosted Service (BackgroundService), HttpClient (NBP API), Swagger.
+.NET 8, ASP.NET Core, EF Core (Sqlite), MediatR, AutoMapper, FluentValidation, Hosted Service (BackgroundService), HttpClient (NBP API), Swagger, MemoryCache.
 
 ## License
 Internal / unspecified.

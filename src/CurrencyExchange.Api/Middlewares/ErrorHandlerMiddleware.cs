@@ -1,4 +1,5 @@
 ﻿using CurrencyExchange.Common.Exceptions;
+using CurrencyExchange.Domain.Exceptions;
 using System.Text.Json;
 
 namespace CurrencyExchange.Api.Middlewares
@@ -12,6 +13,11 @@ namespace CurrencyExchange.Api.Middlewares
             try
             {
                 await _next(context);
+            }
+            catch (DomainValidationException ex)
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(new { error = ex.Message });
             }
             catch (Exception error)
             {

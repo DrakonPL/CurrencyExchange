@@ -32,6 +32,7 @@ namespace CurrencyExchange.UnitTests
         {
             var options = new DbContextOptionsBuilder<CurrencyExchangeDbContext>()
                 .UseInMemoryDatabase($"test_{Guid.NewGuid()}")
+                .EnableSensitiveDataLogging() // helpful for diagnosing tracking issues
                 .Options;
 
             Context = new CurrencyExchangeDbContext(options);
@@ -83,7 +84,7 @@ namespace CurrencyExchange.UnitTests
         public void AddFunds(Wallet wallet, string currencyCode, decimal amount)
         {
             var currency = Context.Currencies.First(c => c.Code == currencyCode);
-            wallet.Funds.Add(new Funds { CurrencyId = currency.Id, Currency = currency, Amount = amount });
+            wallet.Funds.Add(new Funds (wallet, currency, amount ));
             Context.SaveChanges();
         }
 

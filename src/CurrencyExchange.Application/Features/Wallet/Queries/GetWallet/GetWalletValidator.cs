@@ -1,13 +1,13 @@
 ﻿using CurrencyExchange.Application.Contracts;
 using FluentValidation;
 
-namespace CurrencyExchange.Application.DTOs.Wallet.Validators
+namespace CurrencyExchange.Application.Features.Wallet.Queries.GetWallet
 {
-    public class GetWalletDtoValidator : AbstractValidator<GetWalletDto>
+    public class GetWalletValidator : AbstractValidator<GetWalletQuery>
     {
         private readonly IWalletRepository _walletRepository;
 
-        public GetWalletDtoValidator(IWalletRepository walletRepository)
+        public GetWalletValidator(IWalletRepository walletRepository)
         {
             _walletRepository = walletRepository;
 

@@ -12,7 +12,7 @@ namespace CurrencyExchange.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.ConfigureApplicationServices();
+            builder.Services.ConfigureApplicationServices(builder.Configuration);
             builder.Services.ConfigureInfrastructureServices();
 
             builder.Services.AddControllers();

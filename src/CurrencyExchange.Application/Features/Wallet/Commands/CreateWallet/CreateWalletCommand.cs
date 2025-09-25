@@ -1,7 +1,6 @@
-﻿using CurrencyExchange.Application.DTOs.Wallet;
-using MediatR;
+﻿using MediatR;
 
 namespace CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet
 {
-    public record CreateWalletCommand(CreateWalletDto CreateWalletDto) : IRequest<int>;
+    public record CreateWalletCommand(string Name) : IRequest<int>;
 }

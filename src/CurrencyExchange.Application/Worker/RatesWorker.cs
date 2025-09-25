@@ -34,22 +34,22 @@ namespace CurrencyExchange.Application.Worker
                 var tables = await nbpClient.GetTableBAsync(ct);
                 foreach (var t in tables)
                 {
-                    foreach (var r in t.rates)
+                    foreach (var r in t.Rates)
                     {
-                        var currency = await currencyRepository.GetByCode(r.code);
+                        var currency = await currencyRepository.GetByCode(r.Code);
                         if (currency == null)
                         {
                             currency = new Currency
                             {
-                                Code = r.code,
-                                Name = r.currency,
-                                Rate = r.mid,
+                                Code = r.Code,
+                                Name = r.Currency,
+                                Rate = r.Mid,
                             };
                             await currencyRepository.Add(currency);
                         }
                         else
                         {
-                            currency.Rate = r.mid;
+                            currency.Rate = r.Mid;
                             await currencyRepository.Update(currency);
                         }
                     }

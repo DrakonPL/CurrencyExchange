@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CurrencyExchange.Application.Common;
 using CurrencyExchange.Application.Contracts;
-using CurrencyExchange.Application.DTOs.Wallet;
+using CurrencyExchange.Application.DTOs;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 

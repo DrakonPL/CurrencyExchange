@@ -14,11 +14,10 @@ namespace CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet
         {
             var wallet = new Domain.Entities.Wallet
             {
-                Name = request.CreateWalletDto.Name
+                Name = request.Name
             };
 
             wallet = await walletRepository.Add(wallet);
-
             memoryCache.Remove(CacheKeys.WalletsAll);
 
             return wallet.Id;

@@ -1,8 +1,7 @@
-﻿using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
+﻿using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
 using Shouldly;
 
-namespace CurrencyExchange.UnitTests.Features
+namespace CurrencyExchange.UnitTests.Features.Funds
 {
     public class ExchangeFundsValidatorTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
@@ -11,15 +10,14 @@ namespace CurrencyExchange.UnitTests.Features
         {
             // arrange
             var v = new ExchangeFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
-            var dto = new ExchangeFundsDto { FromCurrencyCode = "USD", ToCurrencyCode = "EUR", Amount = 10m };
-            var cmd = new ExchangeFundsCommand(987654, dto);
+            var cmd = new ExchangeFundsCommand(987654, "USD", "EUR", 10m);
 
             // act
             var result = await v.ValidateAsync(cmd);
 
             // assert
             result.IsValid.ShouldBeFalse();
-            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "Id");
+            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "WalletId");
         }
 
         [Fact]
@@ -28,8 +26,7 @@ namespace CurrencyExchange.UnitTests.Features
             // arrange
             var wallet = testFixture.AddWallet("XV-CMD-OK");
             var v = new ExchangeFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
-            var dto = new ExchangeFundsDto { FromCurrencyCode = "USD", ToCurrencyCode = "EUR", Amount = 15m };
-            var cmd = new ExchangeFundsCommand(wallet.Id, dto);
+            var cmd = new ExchangeFundsCommand(wallet.Id, "USD", "EUR", 15m);
 
             // act
             var result = await v.ValidateAsync(cmd);

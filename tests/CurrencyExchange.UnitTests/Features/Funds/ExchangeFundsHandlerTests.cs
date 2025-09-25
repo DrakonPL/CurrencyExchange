@@ -1,9 +1,9 @@
-﻿using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
+﻿using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
 using CurrencyExchange.Common.Exceptions;
+using CurrencyExchange.Domain.Exceptions;
 using Shouldly;
 
-namespace CurrencyExchange.UnitTests.Features
+namespace CurrencyExchange.UnitTests.Features.Funds
 {
     public class ExchangeFundsHandlerTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
@@ -21,15 +21,8 @@ namespace CurrencyExchange.UnitTests.Features
                 testFixture.Mapper,
                 testFixture.MemoryCache);
 
-            var dto = new ExchangeFundsDto
-            {
-                FromCurrencyCode = "USD",
-                ToCurrencyCode = "EUR",
-                Amount = 50m
-            };
-
-            await Should.ThrowAsync<BadRequestException>(() =>
-                handler.Handle(new ExchangeFundsCommand(wallet.Id, dto), CancellationToken.None));
+            await Should.ThrowAsync<DomainValidationException>(() =>
+                handler.Handle(new ExchangeFundsCommand(wallet.Id, "USD", "EUR", 50m), CancellationToken.None));
         }
 
         [Fact]
@@ -46,15 +39,8 @@ namespace CurrencyExchange.UnitTests.Features
                 testFixture.Mapper,
                 testFixture.MemoryCache);
 
-            var dto = new ExchangeFundsDto
-            {
-                FromCurrencyCode = "USD",
-                ToCurrencyCode = "EUR",
-                Amount = 40m
-            };
-
             // act
-            var result = await handler.Handle(new ExchangeFundsCommand(wallet.Id, dto), CancellationToken.None);
+            var result = await handler.Handle(new ExchangeFundsCommand(wallet.Id, "USD", "EUR", 40m), CancellationToken.None);
 
             // assert
             result.CurrencyCode.ShouldBe("EUR");
@@ -78,15 +64,8 @@ namespace CurrencyExchange.UnitTests.Features
                 testFixture.Mapper,
                 testFixture.MemoryCache);
 
-            var dto = new ExchangeFundsDto
-            {
-                FromCurrencyCode = "USD",
-                ToCurrencyCode = "EUR",
-                Amount = 100m
-            };
-
             // act
-            var result = await handler.Handle(new ExchangeFundsCommand(wallet.Id, dto), CancellationToken.None);
+            var result = await handler.Handle(new ExchangeFundsCommand(wallet.Id, "USD", "EUR", 100m), CancellationToken.None);
 
             // assert
             // 100 USD -> PLN 400 -> EUR ≈ 90.9091 added -> total ≈ 100.9091

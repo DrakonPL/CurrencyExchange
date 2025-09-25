@@ -1,4 +1,4 @@
-﻿using CurrencyExchange.Application.DTOs.Wallet;
+﻿using CurrencyExchange.Application.DTOs;
 using MediatR;
 
 namespace CurrencyExchange.Application.Features.Wallet.Queries.GetAllWallets

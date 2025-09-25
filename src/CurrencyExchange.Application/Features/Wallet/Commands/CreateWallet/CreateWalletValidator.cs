@@ -1,16 +1,12 @@
 ﻿using CurrencyExchange.Application.Contracts;
 using FluentValidation;
 
-namespace CurrencyExchange.Application.DTOs.Wallet.Validators
+namespace CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet
 {
-    public class CreateWalletDtoValidator : AbstractValidator<CreateWalletDto>
+    public class CreateWalletValidator : AbstractValidator<CreateWalletCommand>
     {
-        private readonly IWalletRepository _walletRepository;
-
-        public CreateWalletDtoValidator(IWalletRepository walletRepository)
+        public CreateWalletValidator(IWalletRepository walletRepository)
         {
-            _walletRepository = walletRepository;
-
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Wallet name is required.")
                 .MaximumLength(100).WithMessage("Wallet name must not exceed 100 characters.");
@@ -18,7 +14,7 @@ namespace CurrencyExchange.Application.DTOs.Wallet.Validators
             RuleFor(p => p.Name)
                 .MustAsync(async (walletName, cancellation) =>
                 {
-                    var wallet = await _walletRepository.GetByName(walletName);
+                    var wallet = await walletRepository.GetByName(walletName);
                     return wallet == null;
                 })
                 .WithErrorCode("400")

@@ -1,8 +1,7 @@
-﻿using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.Features.Funds.Commands.DepositFunds;
+﻿using CurrencyExchange.Application.Features.Funds.Commands.DepositFunds;
 using Shouldly;
 
-namespace CurrencyExchange.UnitTests.Features
+namespace CurrencyExchange.UnitTests.Features.Funds
 {
     public class DepositFundsValidatorTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
@@ -11,15 +10,14 @@ namespace CurrencyExchange.UnitTests.Features
         {
             // arrange
             var v = new DepositFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
-            var dto = new DepositFundsDto { CurrencyCode = "USD", Amount = 10m };
-            var cmd = new DepositFundsCommand(999999, dto);
+            var cmd = new DepositFundsCommand(999999, "USD", 10m);
 
             // act
             var result = await v.ValidateAsync(cmd);
 
             // assert
             result.IsValid.ShouldBeFalse();
-            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "Id");
+            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "WalletId");
         }
 
         [Fact]
@@ -28,8 +26,7 @@ namespace CurrencyExchange.UnitTests.Features
             // arrange
             var wallet = testFixture.AddWallet("DV-CMD-OK");
             var v = new DepositFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
-            var dto = new DepositFundsDto { CurrencyCode = "USD", Amount = 25m };
-            var cmd = new DepositFundsCommand(wallet.Id, dto);
+            var cmd = new DepositFundsCommand(wallet.Id, "USD", 25m);
 
             // act
             var result = await v.ValidateAsync(cmd);

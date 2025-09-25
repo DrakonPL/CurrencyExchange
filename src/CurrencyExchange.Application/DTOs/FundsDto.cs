@@ -1,4 +1,4 @@
-﻿namespace CurrencyExchange.Application.DTOs.Funds
+﻿namespace CurrencyExchange.Application.DTOs
 {
     public class FundsDto : BaseDto
     {

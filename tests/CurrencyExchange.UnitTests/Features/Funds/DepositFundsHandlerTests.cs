@@ -1,8 +1,7 @@
-﻿using CurrencyExchange.Application.DTOs.Funds;
-using CurrencyExchange.Application.Features.Funds.Commands.DepositFunds;
+﻿using CurrencyExchange.Application.Features.Funds.Commands.DepositFunds;
 using Shouldly;
 
-namespace CurrencyExchange.UnitTests.Features
+namespace CurrencyExchange.UnitTests.Features.Funds
 {
     public class DepositFundsHandlerTests(TestFixture testFixture) : IClassFixture<TestFixture>
     {
@@ -12,10 +11,9 @@ namespace CurrencyExchange.UnitTests.Features
             // arrange
             var wallet = testFixture.AddWallet("A");
             var handler = new DepositFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
-            var dto = new DepositFundsDto { CurrencyCode = "USD", Amount = 50m };
 
             // act
-            var result = await handler.Handle(new DepositFundsCommand(wallet.Id, dto), CancellationToken.None);
+            var result = await handler.Handle(new DepositFundsCommand(wallet.Id, "USD", 50m), CancellationToken.None);
 
             // assert
             result.Amount.ShouldBe(50m);
@@ -30,10 +28,9 @@ namespace CurrencyExchange.UnitTests.Features
             testFixture.AddFunds(wallet, "USD", 20m);
 
             var handler = new DepositFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
-            var dto = new DepositFundsDto { CurrencyCode = "USD", Amount = 30m };
 
             // act
-            var result = await handler.Handle(new DepositFundsCommand(wallet.Id, dto), CancellationToken.None);
+            var result = await handler.Handle(new DepositFundsCommand(wallet.Id, "USD", 30m), CancellationToken.None);
 
             // assert
             result.Amount.ShouldBe(50m);

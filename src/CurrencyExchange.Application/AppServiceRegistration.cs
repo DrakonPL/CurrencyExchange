@@ -3,6 +3,7 @@ using CurrencyExchange.Application.Interfaces;
 using CurrencyExchange.Application.Services;
 using CurrencyExchange.Application.Worker;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -10,7 +11,7 @@ namespace CurrencyExchange.Application
 {
     public static class AppServiceRegistration
     {
-        public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
+        public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
             services.AddMediatR(cfg =>
@@ -20,7 +21,10 @@ namespace CurrencyExchange.Application
             );
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            services.AddHttpClient<NbpClient>(c => c.BaseAddress = new Uri("https://api.nbp.pl"));
+            var nbpBaseUrl = configuration["ExternalApis:Nbp:BaseUrl"]
+                 ?? throw new InvalidOperationException("NBP base URL not configured.");
+
+            services.AddHttpClient<NbpClient>(c => c.BaseAddress = new Uri(nbpBaseUrl));
             services.AddHostedService<RatesWorker>();
 
             services.AddScoped<ICurrencyConverter, CurrencyConverter>();
