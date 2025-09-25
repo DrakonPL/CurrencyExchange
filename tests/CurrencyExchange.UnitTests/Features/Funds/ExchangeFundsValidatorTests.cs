@@ -33,7 +33,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
 
             // assert
             result.IsValid.ShouldBeFalse();
-            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "SourceCurrencyCode");
+            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "FromCurrencyCode");
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
 
             // assert
             result.IsValid.ShouldBeFalse();
-            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "TargetCurrencyCode");
+            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "ToCurrencyCode");
         }
 
         [Fact]
