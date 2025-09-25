@@ -1,6 +1,6 @@
 ﻿using CurrencyExchange.Application.Contracts;
 using CurrencyExchange.Application.Interfaces;
-using CurrencyExchange.Common.Exceptions;
+using CurrencyExchange.Application.Exceptions;
 
 namespace CurrencyExchange.Application.Services
 {

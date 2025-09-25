@@ -1,7 +1,9 @@
 using CurrencyExchange.Api.Middlewares;
 using CurrencyExchange.Application;
 using CurrencyExchange.Infrastructure;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace CurrencyExchange.Api
 {
@@ -10,6 +12,16 @@ namespace CurrencyExchange.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Enable HTTP logging services
+            builder.Services.AddHttpLogging(options =>
+            {
+                options.LoggingFields = HttpLoggingFields.Request | HttpLoggingFields.Response;
+            });
+
+            builder.Host.UseSerilog((context, loggerConfig) =>
+                loggerConfig.ReadFrom.Configuration(context.Configuration)
+            );
 
             // Add services to the container.
             builder.Services.ConfigureApplicationServices(builder.Configuration);
@@ -31,6 +43,8 @@ namespace CurrencyExchange.Api
 
             var app = builder.Build();
 
+            app.UseSerilogRequestLogging();
+
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
@@ -45,8 +59,10 @@ namespace CurrencyExchange.Api
             }
 
             app.UseHttpsRedirection();
-            app.UseAuthorization();
+            //app.UseHttpLogging();
+
             app.MapControllers();
+
             app.Run();
         }
     }

@@ -1,5 +1,4 @@
 ﻿using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
-using CurrencyExchange.Common.Exceptions;
 using CurrencyExchange.Domain.Exceptions;
 using Shouldly;
 

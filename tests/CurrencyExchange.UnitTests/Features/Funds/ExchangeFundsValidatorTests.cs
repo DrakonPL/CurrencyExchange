@@ -21,6 +21,38 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         }
 
         [Fact]
+        public async Task SourceCurrencyNotFound_Fails404()
+        {
+            // arrange
+            var wallet = testFixture.AddWallet("XV-CMD-SRC-404");
+            var v = new ExchangeFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var cmd = new ExchangeFundsCommand(wallet.Id, "ZZZ", "EUR", 10m);
+
+            // act
+            var result = await v.ValidateAsync(cmd);
+
+            // assert
+            result.IsValid.ShouldBeFalse();
+            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "SourceCurrencyCode");
+        }
+
+        [Fact]
+        public async Task TargetCurrencyNotFound_Fails404()
+        {
+            // arrange
+            var wallet = testFixture.AddWallet("XV-CMD-TGT-404");
+            var v = new ExchangeFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var cmd = new ExchangeFundsCommand(wallet.Id, "USD", "ZZZ", 10m);
+
+            // act
+            var result = await v.ValidateAsync(cmd);
+
+            // assert
+            result.IsValid.ShouldBeFalse();
+            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "TargetCurrencyCode");
+        }
+
+        [Fact]
         public async Task Valid_Passes()
         {
             // arrange

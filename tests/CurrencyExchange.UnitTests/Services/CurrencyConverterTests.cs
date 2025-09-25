@@ -1,4 +1,4 @@
-﻿using CurrencyExchange.Common.Exceptions;
+﻿using CurrencyExchange.Application.Exceptions;
 using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Services

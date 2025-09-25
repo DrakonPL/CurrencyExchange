@@ -4,22 +4,61 @@ using CurrencyExchange.Domain.Entities;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace CurrencyExchange.Application.Worker
 {
-    public class RatesWorker(IServiceScopeFactory scopeFactory, IMemoryCache memoryCache) : BackgroundService
+    public class RatesWorker(IServiceScopeFactory scopeFactory, IMemoryCache memoryCache, ILogger<RatesWorker> logger) : BackgroundService
     {
         private readonly TimeSpan _interval = TimeSpan.FromHours(4);
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             // First run on startup
-            await FetchOnce(stoppingToken);
+            await RunWithResilience(FetchOnce, stoppingToken);
 
-            while (!stoppingToken.IsCancellationRequested)
+            using var timer = new PeriodicTimer(_interval);
+            while (await timer.WaitForNextTickAsync(stoppingToken))
             {
-                try { await Task.Delay(_interval, stoppingToken); } catch { }
-                await FetchOnce(stoppingToken);
+                await RunWithResilience(FetchOnce, stoppingToken);
+            }
+        }
+
+        private async Task RunWithResilience(Func<CancellationToken, Task> action, CancellationToken ct)
+        {
+            const int maxAttempts = 3;
+            var delay = TimeSpan.FromSeconds(2);
+
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                try
+                {
+                    await action(ct);
+                    return;
+                }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                {
+                    logger.LogInformation("RatesWorker cancelled.");
+                    return;
+                }
+                catch (HttpRequestException ex)
+                {
+                    logger.LogWarning(ex, "Network error while fetching rates (attempt {Attempt}/{MaxAttempts}).", attempt, maxAttempts);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Unexpected error while fetching rates (attempt {Attempt}/{MaxAttempts}).", attempt, maxAttempts);
+                }
+
+                if (attempt < maxAttempts)
+                {
+                    try { await Task.Delay(delay, ct); } catch (OperationCanceledException) { return; }
+                    delay = TimeSpan.FromSeconds(Math.Min(delay.TotalSeconds * 2, 60)); // exponential backoff with cap
+                }
+                else
+                {
+                    logger.LogError("All retries exhausted. Will try again on the next interval.");
+                }
             }
         }
 
@@ -29,39 +68,50 @@ namespace CurrencyExchange.Application.Worker
             var nbpClient = scope.ServiceProvider.GetRequiredService<NbpClient>();
             var currencyRepository = scope.ServiceProvider.GetRequiredService<ICurrencyRepository>();
 
-            try
+            var tables = await nbpClient.GetTableBAsync(ct);
+
+            int added = 0, updated = 0, failed = 0;
+
+            foreach (var t in tables)
             {
-                var tables = await nbpClient.GetTableBAsync(ct);
-                foreach (var t in tables)
+                foreach (var r in t.Rates)
                 {
-                    foreach (var r in t.Rates)
+                    try
                     {
                         var currency = await currencyRepository.GetByCode(r.Code);
                         if (currency == null)
                         {
-                            currency = new Currency
+                            var newCurrency = new Currency
                             {
                                 Code = r.Code,
                                 Name = r.Currency,
                                 Rate = r.Mid,
                             };
-                            await currencyRepository.Add(currency);
+                            await currencyRepository.Add(newCurrency);
+                            added++;
                         }
                         else
                         {
                             currency.Rate = r.Mid;
                             await currencyRepository.Update(currency);
+                            updated++;
                         }
                     }
+                    catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                    {
+                        logger.LogInformation("Rates update cancelled.");
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        failed++;
+                        logger.LogWarning(ex, "Failed to upsert currency {Code}. Skipping.", r.Code);
+                    }
                 }
-
-                memoryCache.Remove(CacheKeys.CurrenciesAll);
             }
-            catch (Exception ex)
-            {
 
-            }
+            memoryCache.Remove(CacheKeys.CurrenciesAll);
+            logger.LogInformation("Rates fetch complete. Added: {Added}, Updated: {Updated}, Failed: {Failed}.", added, updated, failed);
         }
-
     }
 }

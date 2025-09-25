@@ -1,4 +1,4 @@
-﻿namespace CurrencyExchange.Common.Exceptions
+﻿namespace CurrencyExchange.Application.Exceptions
 {
     public class BadRequestException : Exception
     {

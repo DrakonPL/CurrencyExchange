@@ -21,6 +21,22 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         }
 
         [Fact]
+        public async Task CurrencyNotFound_Fails404()
+        {
+            // arrange
+            var wallet = testFixture.AddWallet("DV-CMD-CURR-404");
+            var v = new DepositFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var cmd = new DepositFundsCommand(wallet.Id, "ZZZ", 10m);
+
+            // act
+            var result = await v.ValidateAsync(cmd);
+
+            // assert
+            result.IsValid.ShouldBeFalse();
+            result.Errors.ShouldContain(e => e.ErrorCode == "404" && e.PropertyName == "CurrencyCode");
+        }
+
+        [Fact]
         public async Task Valid_Passes()
         {
             // arrange
