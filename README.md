@@ -133,6 +133,73 @@ POST /Wallet/1/exchange
 GET /Wallet/1/transactions
 ```
 
+## Sample Responses
+Example responses for common endpoints.
+
+GET /Currency
+```json
+[
+  { "code": "PLN", "name": "Polish Zloty", "rate": 1.0 },
+  { "code": "USD", "name": "US Dollar", "rate": 4.0 },
+  { "code": "EUR", "name": "Euro", "rate": 4.4 }
+]
+```
+
+POST /Wallet
+```json
+{ "id": 1, "name": "Demo Wallet" }
+```
+
+POST /Wallet/{id}/deposit
+```json
+{ "currencyCode": "USD", "amount": 150.0 }
+```
+
+GET /Wallet/{id}
+```json
+{
+  "id": 1,
+  "name": "Demo Wallet",
+  "funds": [
+    { "currencyCode": "USD", "amount": 150.0 },
+    { "currencyCode": "EUR", "amount": 36.36 }
+  ]
+}
+```
+
+GET /Wallet/{id}/transactions
+```json
+[
+  {
+    "id": 101,
+    "walletId": 1,
+    "currencyCode": "USD",
+    "type": "Deposit",
+    "direction": "In",
+    "amount": 100.0,
+    "rateAtTransaction": 4.0,
+    "createdAtUtc": "2025-09-28T12:34:56Z",
+    "correlationId": "5c1f3a56-6e0e-4c47-9c9a-5b0d0a3b1b2c"
+  }
+]
+```
+
+## Logging
+- Strategy:
+  - Structured request logging via Serilog in [`Program`](src/CurrencyExchange.Api/Program.cs) with app.UseSerilogRequestLogging().
+  - Action-level logs include RequestId and key fields (wallet id, currencies, amounts) in [`WalletController`](src/CurrencyExchange.Api/Controllers/WalletController.cs) and [`CurrencyController`](src/CurrencyExchange.Api/Controllers/CurrencyController.cs).
+  - Centralized error logging and mapping in [`ErrorHandlerMiddleware`](src/CurrencyExchange.Api/Middlewares/ErrorHandlerMiddleware.cs).
+  - HTTP logging middleware enabled in Development.
+
+- Monitoring:
+  - By default, logs are written to console; view them in the VS Code Terminal when running:
+    ```bash
+    dotnet run --project src/CurrencyExchange.Api
+    ```
+  - Configure sinks/levels via Serilog settings in appsettings.json (e.g., write to file/seq); restart the API after changes.
+  - Use the RequestId from responses/logs to correlate requests across controller and middleware entries.
+
+
 ## Tech Stack
 .NET 8, ASP.NET Core, EF Core (Sqlite), MediatR, AutoMapper, FluentValidation, Hosted Service (BackgroundService), HttpClient (NBP API), Swagger, MemoryCache.
 
