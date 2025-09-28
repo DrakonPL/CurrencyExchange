@@ -9,7 +9,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         public async Task WalletNotFound_Fails404()
         {
             // arrange
-            var v = new ExchangeFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new ExchangeFundsValidator(testFixture.UnitOfWork, testFixture.CurrencyRepository);
             var cmd = new ExchangeFundsCommand(987654, "USD", "EUR", 10m);
 
             // act
@@ -25,7 +25,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         {
             // arrange
             var wallet = testFixture.AddWallet("XV-CMD-SRC-404");
-            var v = new ExchangeFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new ExchangeFundsValidator(testFixture.UnitOfWork, testFixture.CurrencyRepository);
             var cmd = new ExchangeFundsCommand(wallet.Id, "ZZZ", "EUR", 10m);
 
             // act
@@ -41,7 +41,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         {
             // arrange
             var wallet = testFixture.AddWallet("XV-CMD-TGT-404");
-            var v = new ExchangeFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new ExchangeFundsValidator(testFixture.UnitOfWork, testFixture.CurrencyRepository);
             var cmd = new ExchangeFundsCommand(wallet.Id, "USD", "ZZZ", 10m);
 
             // act
@@ -57,7 +57,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         {
             // arrange
             var wallet = testFixture.AddWallet("XV-CMD-OK");
-            var v = new ExchangeFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new ExchangeFundsValidator(testFixture.UnitOfWork, testFixture.CurrencyRepository);
             var cmd = new ExchangeFundsCommand(wallet.Id, "USD", "EUR", 15m);
 
             // act

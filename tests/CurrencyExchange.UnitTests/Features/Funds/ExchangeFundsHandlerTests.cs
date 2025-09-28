@@ -1,5 +1,6 @@
 ﻿using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
 using CurrencyExchange.Domain.Exceptions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Features.Funds
@@ -17,7 +18,8 @@ namespace CurrencyExchange.UnitTests.Features.Funds
                 testFixture.UnitOfWork,
                 testFixture.CurrencyConverter,
                 testFixture.Mapper,
-                testFixture.MemoryCache);
+                testFixture.MemoryCache,
+                NullLogger<ExchangeFundsHandler>.Instance);
 
             await Should.ThrowAsync<DomainValidationException>(() =>
                 handler.Handle(new ExchangeFundsCommand(wallet.Id, "USD", "EUR", 50m), CancellationToken.None));
@@ -34,7 +36,8 @@ namespace CurrencyExchange.UnitTests.Features.Funds
                 testFixture.UnitOfWork,
                 testFixture.CurrencyConverter,
                 testFixture.Mapper,
-                testFixture.MemoryCache);
+                testFixture.MemoryCache,
+                NullLogger<ExchangeFundsHandler>.Instance);
 
             // act
             var result = await handler.Handle(new ExchangeFundsCommand(wallet.Id, "USD", "EUR", 40m), CancellationToken.None);
@@ -58,7 +61,8 @@ namespace CurrencyExchange.UnitTests.Features.Funds
                 testFixture.UnitOfWork,
                 testFixture.CurrencyConverter,
                 testFixture.Mapper,
-                testFixture.MemoryCache);
+                testFixture.MemoryCache,
+                NullLogger<ExchangeFundsHandler>.Instance);
 
             // act
             var result = await handler.Handle(new ExchangeFundsCommand(wallet.Id, "USD", "EUR", 100m), CancellationToken.None);

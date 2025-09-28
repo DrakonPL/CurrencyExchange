@@ -9,7 +9,7 @@ namespace CurrencyExchange.UnitTests.Features.Wallet
         public async Task WalletNotFound_Fails404()
         {
             // arrange
-            var v = new GetWalletValidator(testFixture.WalletRepository);
+            var v = new GetWalletValidator(testFixture.UnitOfWork);
             var query = new GetWalletQuery(123456);
 
             // act
@@ -25,7 +25,7 @@ namespace CurrencyExchange.UnitTests.Features.Wallet
         {
             // arrange
             var wallet = testFixture.AddWallet("GW-VAL-OK");
-            var v = new GetWalletValidator(testFixture.WalletRepository);
+            var v = new GetWalletValidator(testFixture.UnitOfWork);
             var query = new GetWalletQuery(wallet.Id);
 
             // act

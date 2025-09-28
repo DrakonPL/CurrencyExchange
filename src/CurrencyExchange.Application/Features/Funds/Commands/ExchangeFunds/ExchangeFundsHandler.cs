@@ -7,6 +7,7 @@ using CurrencyExchange.Domain.Entities;
 using CurrencyExchange.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 {
@@ -14,11 +15,14 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
         IUnitOfWork unitOfWork,
         ICurrencyConverter currencyConverter,
         IMapper mapper,
-        IMemoryCache memoryCache
+        IMemoryCache memoryCache,
+        ILogger<ExchangeFundsHandler> logger
         ) : IRequestHandler<ExchangeFundsCommand, FundsDto>
     {
         public async Task<FundsDto> Handle(ExchangeFundsCommand request, CancellationToken cancellationToken)
         {
+            logger.LogInformation("Exchange start WalletId={WalletId} From={From} To={To} Amount={Amount}", request.WalletId, request.FromCurrencyCode, request.ToCurrencyCode, request.Amount);
+
             var wallet = await unitOfWork.WalletRepository.Get(request.WalletId);
             var fromCurrency = await unitOfWork.CurrencyRepository.GetByCode(request.FromCurrencyCode);
             var toCurrency = await unitOfWork.CurrencyRepository.GetByCode(request.ToCurrencyCode);
@@ -62,6 +66,10 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 
             memoryCache.Remove(CacheKeys.WalletsAll);
             memoryCache.Remove(CacheKeys.WalletById(request.WalletId));
+
+            logger.LogInformation("Exchange done WalletId={WalletId} From={From} To={To} Debited={Debited} Credited={CreditedCurrency} Amount={CreditedAmount}",
+                request.WalletId, request.FromCurrencyCode, request.ToCurrencyCode, request.Amount, funds.Currency.Code, funds.Amount);
+
 
             return mapper.Map<FundsDto>(funds);
         }

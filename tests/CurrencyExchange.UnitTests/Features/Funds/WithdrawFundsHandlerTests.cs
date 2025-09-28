@@ -1,5 +1,7 @@
-﻿using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
+﻿using CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds;
+using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
 using CurrencyExchange.Domain.Exceptions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Shouldly;
 
 namespace CurrencyExchange.UnitTests.Features.Funds
@@ -13,7 +15,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
             var wallet = testFixture.AddWallet("W1");
             testFixture.AddFunds(wallet, "USD", 100m);
 
-            var handler = new WithdrawFundsHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache);
+            var handler = new WithdrawFundsHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache, NullLogger<WithdrawFundsHandler>.Instance);
 
             // act
             var result = await handler.Handle(new WithdrawFundsCommand(wallet.Id, "USD", 40m), CancellationToken.None);
@@ -29,7 +31,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
             var wallet = testFixture.AddWallet("W2");
             testFixture.AddFunds(wallet, "USD", 10m);
 
-            var handler = new WithdrawFundsHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache);
+            var handler = new WithdrawFundsHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache, NullLogger<WithdrawFundsHandler>.Instance);
 
             // assert
             await Should.ThrowAsync<DomainValidationException>(() =>

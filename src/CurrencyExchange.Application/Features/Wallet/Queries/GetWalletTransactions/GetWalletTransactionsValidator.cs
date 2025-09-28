@@ -5,12 +5,12 @@ namespace CurrencyExchange.Application.Features.Wallet.Queries.GetWalletTransact
 {
     public class GetWalletTransactionsValidator : AbstractValidator<GetWalletTransactionsQuery>
     {
-        public GetWalletTransactionsValidator(IWalletRepository walletRepository)
+        public GetWalletTransactionsValidator(IUnitOfWork unitOfWork)
         {
             RuleFor(p => p.WalletId)
                 .MustAsync(async (walletId, cancellation) =>
                 {
-                    var wallet = await walletRepository.Get(walletId);
+                    var wallet = await unitOfWork.WalletRepository.Get(walletId);
                     return wallet != null;
                 })
                 .WithErrorCode("404")

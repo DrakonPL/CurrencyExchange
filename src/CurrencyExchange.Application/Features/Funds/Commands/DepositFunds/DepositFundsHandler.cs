@@ -6,17 +6,21 @@ using CurrencyExchange.Domain.Entities;
 using CurrencyExchange.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace CurrencyExchange.Application.Features.Funds.Commands.DepositFunds
 {
     public class DepositFundsHandler(
          IUnitOfWork unitOfWork,
          IMapper mapper,
-         IMemoryCache memoryCache
+         IMemoryCache memoryCache,
+         ILogger<DepositFundsHandler> logger
         ) : IRequestHandler<DepositFundsCommand, FundsDto>
     {
         public async Task<FundsDto> Handle(DepositFundsCommand request, CancellationToken cancellationToken)
         {
+            logger.LogInformation("Deposit start WalletId={WalletId} Currency={Currency} Amount={Amount}", request.WalletId, request.CurrencyCode, request.Amount);
+
             var wallet = await unitOfWork.WalletRepository.Get(request.WalletId);
             var currency = await unitOfWork.CurrencyRepository.GetByCode(request.CurrencyCode);
 
@@ -37,6 +41,8 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.DepositFunds
 
             memoryCache.Remove(CacheKeys.WalletsAll);
             memoryCache.Remove(CacheKeys.WalletById(request.WalletId));
+
+            logger.LogInformation("Deposit done WalletId={WalletId} Currency={Currency} NewAmount={NewAmount}", request.WalletId, funds.Currency.Code, funds.Amount);
 
             return mapper.Map<FundsDto>(funds);
         }

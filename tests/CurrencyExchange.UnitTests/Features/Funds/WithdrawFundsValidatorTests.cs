@@ -9,7 +9,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         public async Task WalletNotFound_Fails404()
         {
             // arrange
-            var v = new WithdrawFundsValidator(testFixture.WalletRepository);
+            var v = new WithdrawFundsValidator(testFixture.UnitOfWork);
             var cmd = new WithdrawFundsCommand(123456, "USD", 10m);
 
             // act
@@ -25,7 +25,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         {
             // arrange
             var wallet = testFixture.AddWallet("WV-CMD-1");
-            var v = new WithdrawFundsValidator(testFixture.WalletRepository);
+            var v = new WithdrawFundsValidator(testFixture.UnitOfWork);
             var cmd = new WithdrawFundsCommand(wallet.Id, "USD", 0m);
 
             // act
@@ -40,7 +40,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         {
             // arrange
             var wallet = testFixture.AddWallet("WV-CMD-OK");
-            var v = new WithdrawFundsValidator(testFixture.WalletRepository);
+            var v = new WithdrawFundsValidator(testFixture.UnitOfWork);
             var cmd = new WithdrawFundsCommand(wallet.Id, "USD", 5m);
 
             // act

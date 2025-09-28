@@ -7,21 +7,18 @@ namespace CurrencyExchange.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CurrencyController : ControllerBase
+    public class CurrencyController(IMediator mediator, ILogger<CurrencyController> logger) : ControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public CurrencyController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IReadOnlyList<CurrencyResponse>>> GetAll()
         {
-            var rates = await _mediator.Send(new GetAllCurrenciesQuery());
+            logger.LogInformation("RequestId={RequestId} Currencies_GetAll requested", HttpContext.TraceIdentifier);
+
+            var rates = await mediator.Send(new GetAllCurrenciesQuery());
             var response = rates.Select(r => new CurrencyResponse(r.Code, r.Name, r.Rate)).ToList();
+
+            logger.LogInformation("RequestId={RequestId} Currencies_GetAll succeeded Count={Count}", HttpContext.TraceIdentifier, response.Count);
             return Ok(response);
         }
     }

@@ -5,10 +5,10 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 {
     public class ExchangeFundsValidator : AbstractValidator<ExchangeFundsCommand>
     {
-        public ExchangeFundsValidator(IWalletRepository walletRepository, ICurrencyRepository currencyRepository)
+        public ExchangeFundsValidator(IUnitOfWork unitOfWork, ICurrencyRepository currencyRepository)
         {
             RuleFor(x => x.WalletId)
-                .MustAsync(async (id, ct) => await walletRepository.Get(id) != null)
+                .MustAsync(async (id, ct) => await unitOfWork.WalletRepository.Get(id) != null)
                 .WithErrorCode("404")
                 .WithMessage("Wallet does not exist.");
 

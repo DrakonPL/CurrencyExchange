@@ -52,6 +52,9 @@ namespace CurrencyExchange.Api
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
+            // Always log requests via Serilog (structured)
+            app.UseSerilogRequestLogging();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -62,7 +65,6 @@ namespace CurrencyExchange.Api
                     c.DisplayRequestDuration();
                 });
 
-                app.UseSerilogRequestLogging();
                 app.UseHttpLogging();
             }
 

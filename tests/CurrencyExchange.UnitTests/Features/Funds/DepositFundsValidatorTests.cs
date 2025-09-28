@@ -9,7 +9,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         public async Task WalletNotFound_Fails404()
         {
             // arrange
-            var v = new DepositFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new DepositFundsValidator(testFixture.UnitOfWork, testFixture.CurrencyRepository);
             var cmd = new DepositFundsCommand(999999, "USD", 10m);
 
             // act
@@ -25,7 +25,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         {
             // arrange
             var wallet = testFixture.AddWallet("DV-CMD-CURR-404");
-            var v = new DepositFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new DepositFundsValidator(testFixture.UnitOfWork, testFixture.CurrencyRepository);
             var cmd = new DepositFundsCommand(wallet.Id, "ZZZ", 10m);
 
             // act
@@ -41,7 +41,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         {
             // arrange
             var wallet = testFixture.AddWallet("DV-CMD-OK");
-            var v = new DepositFundsValidator(testFixture.WalletRepository, testFixture.CurrencyRepository);
+            var v = new DepositFundsValidator(testFixture.UnitOfWork, testFixture.CurrencyRepository);
             var cmd = new DepositFundsCommand(wallet.Id, "USD", 25m);
 
             // act
