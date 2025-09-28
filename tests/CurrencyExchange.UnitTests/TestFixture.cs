@@ -26,6 +26,7 @@ namespace CurrencyExchange.UnitTests
         public IWalletRepository WalletRepository { get; }
         public ICurrencyRepository CurrencyRepository { get; }
         public IFundsRepository FundsRepository { get; }
+        public ITransactionRepository TransactionRepository { get; }
         public ICurrencyConverter CurrencyConverter { get; }
         public IMapper Mapper { get; }
         public IMemoryCache MemoryCache { get; }
@@ -43,11 +44,13 @@ namespace CurrencyExchange.UnitTests
             UnitOfWork = new UnitOfWork(Context,
                 new CurrencyRepository(Context),
                 new WalletRepository(Context),
-                new FundsRepository(Context));
+                new FundsRepository(Context),
+                new TransactionRepository(Context));
 
             CurrencyRepository = UnitOfWork.CurrencyRepository;
             WalletRepository = UnitOfWork.WalletRepository;
             FundsRepository = UnitOfWork.FundsRepository;
+            TransactionRepository = UnitOfWork.TransactionRepository;
 
             var mapperCfg = new MapperConfiguration(cfg =>
             {

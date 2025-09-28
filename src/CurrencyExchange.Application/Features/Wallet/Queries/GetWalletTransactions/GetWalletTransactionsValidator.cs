@@ -1,14 +1,13 @@
 ﻿using CurrencyExchange.Application.Contracts;
 using FluentValidation;
 
-namespace CurrencyExchange.Application.Features.Wallet.Queries.GetWallet
+namespace CurrencyExchange.Application.Features.Wallet.Queries.GetWalletTransactions
 {
-    public class GetWalletValidator : AbstractValidator<GetWalletQuery>
+    public class GetWalletTransactionsValidator : AbstractValidator<GetWalletTransactionsQuery>
     {
-        public GetWalletValidator(IWalletRepository walletRepository)
+        public GetWalletTransactionsValidator(IWalletRepository walletRepository)
         {
-
-            RuleFor(p => p.Id)
+            RuleFor(p => p.WalletId)
                 .MustAsync(async (walletId, cancellation) =>
                 {
                     var wallet = await walletRepository.Get(walletId);

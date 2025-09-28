@@ -3,6 +3,8 @@ using CurrencyExchange.Application.Common;
 using CurrencyExchange.Application.Contracts;
 using CurrencyExchange.Application.DTOs;
 using CurrencyExchange.Application.Interfaces;
+using CurrencyExchange.Domain.Entities;
+using CurrencyExchange.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -32,6 +34,29 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 
             var funds = wallet.DepositFunds(toCurrency, exchangedAmount);
             unitOfWork.WalletRepository.Update(wallet);
+
+            // log both legs with same correlation id
+            var correlationId = Guid.NewGuid();
+
+            await unitOfWork.TransactionRepository.Add(new Transaction(
+                wallet,
+                fromCurrency,
+                TransactionType.Exchange,
+                TransactionDirection.Out,
+                request.Amount,
+                fromCurrency.Rate,
+                correlationId
+            ));
+
+            await unitOfWork.TransactionRepository.Add(new Transaction(
+                wallet,
+                toCurrency,
+                TransactionType.Exchange,
+                TransactionDirection.In,
+                Math.Round(exchangedAmount, 4), // keep precision similar to tests
+                toCurrency.Rate,
+                correlationId
+            ));
 
             await unitOfWork.SaveAsync(cancellationToken);
 

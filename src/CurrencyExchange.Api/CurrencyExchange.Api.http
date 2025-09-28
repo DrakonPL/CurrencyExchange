@@ -1,6 +1,11 @@
 @httpHost = http://localhost:5045
 @httpsHost = https://localhost:7039
 
+@walletId = 1
+@amount = 50
+@fromCurrency = USD
+@toCurrency = EUR
+
 ### Get all currencies
 GET {{httpHost}}/Currency
 Accept: application/json
@@ -19,39 +24,43 @@ GET {{httpHost}}/Wallet
 Accept: application/json
 
 ### Get a wallet by id
-GET {{httpHost}}/Wallet/1
+GET {{httpHost}}/Wallet/{{walletId}}
 Accept: application/json
 
-### Deposit funds (wallet id in route; currencyCode must exist)
-POST {{httpHost}}/Wallet/1/deposit
+### Deposit funds (currency must exist)
+POST {{httpHost}}/Wallet/{{walletId}}/deposit
 Content-Type: application/json
 Accept: application/json
 
 {
-  "currencyCode": "USD",
-  "amount": 100
+  "currencyCode": "{{fromCurrency}}",
+  "amount": {{amount}}
 }
 
 ### Withdraw funds
-POST {{httpHost}}/Wallet/1/withdraw
+POST {{httpHost}}/Wallet/{{walletId}}/withdraw
 Content-Type: application/json
 Accept: application/json
 
 {
-  "currencyCode": "USD",
+  "currencyCode": "{{fromCurrency}}",
   "amount": 25
 }
 
 ### Exchange funds (USD -> EUR)
-POST {{httpHost}}/Wallet/1/exchange
+POST {{httpHost}}/Wallet/{{walletId}}/exchange
 Content-Type: application/json
 Accept: application/json
 
 {
-  "fromCurrencyCode": "USD",
-  "toCurrencyCode": "EUR",
-  "amount": 50
+  "fromCurrencyCode": "{{fromCurrency}}",
+  "toCurrencyCode": "{{toCurrency}}",
+  "amount": {{amount}}
 }
+
+### Get wallet transactions (optional paging with take/skip)
+GET {{httpHost}}/Wallet/{{walletId}}/transactions?take=20&skip=0
+Accept: application/json
 
 ### (Optional) Switch to HTTPS host
 GET {{httpsHost}}/Currency

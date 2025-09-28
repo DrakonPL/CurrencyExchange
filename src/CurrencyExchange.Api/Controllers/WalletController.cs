@@ -4,6 +4,7 @@ using CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds;
 using CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet;
 using CurrencyExchange.Application.Features.Wallet.Queries.GetAllWallets;
 using CurrencyExchange.Application.Features.Wallet.Queries.GetWallet;
+using CurrencyExchange.Application.Features.Wallet.Queries.GetWalletTransactions;
 using CurrencyExchange.Contracts.Funds;
 using CurrencyExchange.Contracts.Wallet;
 using MediatR;
@@ -78,6 +79,26 @@ namespace CurrencyExchange.Api.Controllers
             var funds = await _mediator.Send(new ExchangeFundsCommand(id, request.FromCurrencyCode, request.ToCurrencyCode, request.Amount));  
             var response = new FundsResponse(funds.CurrencyCode, funds.Amount);
             return Ok(response);
+        }
+
+        [HttpGet("{id}/transactions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IReadOnlyList<TransactionResponse>>> GetTransactions(int id, [FromQuery] int? take, [FromQuery] int? skip)
+        {
+            var items = await _mediator.Send(new GetWalletTransactionsQuery(id, take, skip));
+            var resp = items.Select(t => new TransactionResponse(
+                t.Id,
+                t.WalletId,
+                t.CurrencyCode,
+                t.Type,
+                t.Direction,
+                t.Amount,
+                t.RateAtTransaction,
+                t.CreatedAtUtc,
+                t.CorrelationId
+            )).ToList();
+            return Ok(resp);
         }
     }
 }

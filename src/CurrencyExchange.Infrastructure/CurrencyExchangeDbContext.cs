@@ -10,6 +10,7 @@ namespace CurrencyExchange.Infrastructure
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Funds> Funds { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         public CurrencyExchangeDbContext(DbContextOptions<CurrencyExchangeDbContext> options) : base(options)
         {

@@ -2,6 +2,8 @@
 using CurrencyExchange.Application.Common;
 using CurrencyExchange.Application.Contracts;
 using CurrencyExchange.Application.DTOs;
+using CurrencyExchange.Domain.Entities;
+using CurrencyExchange.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -20,6 +22,16 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.WithdrawFunds
 
             var fundsLeft = wallet.WithdrawFunds(currency, request.Amount);
             unitOfWork.WalletRepository.Update(wallet);
+
+            // log transaction
+            await unitOfWork.TransactionRepository.Add(new Transaction(
+                wallet,
+                currency,
+                TransactionType.Withdraw,
+                TransactionDirection.Out,
+                request.Amount,
+                currency.Rate
+            ));
 
             await unitOfWork.SaveAsync(cancellationToken);
 

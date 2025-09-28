@@ -14,6 +14,7 @@ namespace CurrencyExchange.Infrastructure
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<ICurrencyRepository, CurrencyRepository>();
             services.AddScoped<IFundsRepository, FundsRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
