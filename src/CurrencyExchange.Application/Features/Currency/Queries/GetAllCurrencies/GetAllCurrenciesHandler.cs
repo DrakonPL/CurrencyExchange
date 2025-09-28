@@ -14,13 +14,11 @@ namespace CurrencyExchange.Application.Features.Currency.Queries.GetAllCurrencie
         ) : IRequestHandler<GetAllCurrenciesQuery, List<CurrencyDto>>
     {
 
-        private readonly TimeSpan _cacheDuration = TimeSpan.FromMinutes(5);
-
         public async Task<List<CurrencyDto>> Handle(GetAllCurrenciesQuery request, CancellationToken cancellationToken)
         {
             var currencyDto = await cache.GetOrCreateAsync(CacheKeys.CurrenciesAll, async entry =>
             {
-                entry.AbsoluteExpirationRelativeToNow = _cacheDuration;
+                entry.AbsoluteExpirationRelativeToNow = CacheKeys.CacheDuration;
 
                 var currencies = await unitOfWork.CurrencyRepository.GetAll();
                 return mapper.Map<List<CurrencyDto>>(currencies);

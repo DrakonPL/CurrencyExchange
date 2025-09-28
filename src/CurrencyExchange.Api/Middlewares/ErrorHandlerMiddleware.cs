@@ -1,6 +1,5 @@
 ﻿using CurrencyExchange.Application.Exceptions;
 using CurrencyExchange.Domain.Exceptions;
-using System.Text.Json;
 
 namespace CurrencyExchange.Api.Middlewares
 {
@@ -21,11 +20,11 @@ namespace CurrencyExchange.Api.Middlewares
                     context.Request.Method, context.Request.Path, context.TraceIdentifier);
 
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+                await context.Response.WriteAsJsonAsync(new { message = ex.Message });
             }
             catch (Exception error)
             {
-                _logger.LogError(error, "Unhandled exception for {Method} {Path} (RequestId: {RequestId})",
+                _logger.LogError(error, "Exception for {Method} {Path} (RequestId: {RequestId})",
                     context.Request.Method, context.Request.Path, context.TraceIdentifier);
 
                 var response = context.Response;
@@ -38,8 +37,7 @@ namespace CurrencyExchange.Api.Middlewares
                     _ => StatusCodes.Status500InternalServerError,
                 };
 
-                var result = JsonSerializer.Serialize(new { message = error.Message });
-                await response.WriteAsync(result);
+                await response.WriteAsJsonAsync(new { message = error.Message });
             }
         }
     }

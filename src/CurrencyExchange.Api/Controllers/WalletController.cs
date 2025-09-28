@@ -24,6 +24,7 @@ namespace CurrencyExchange.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IReadOnlyList<WalletResponse>>> GetAll()
         {
             var wallets = await _mediator.Send(new GetAllWalletsQuery());
@@ -32,11 +33,13 @@ namespace CurrencyExchange.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<WalletResponse>> GetWallet(int id)
         {
             var wallet = await _mediator.Send(new GetWalletQuery(id));
             var response = new WalletResponse(wallet.Id, wallet.Name, wallet.Funds.Select(f => new FundsResponse(f.CurrencyCode, f.Amount)).ToList());
-            return Ok(wallet);
+            return Ok(response);
         }
 
         [HttpPost]

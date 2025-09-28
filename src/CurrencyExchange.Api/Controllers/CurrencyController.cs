@@ -17,6 +17,7 @@ namespace CurrencyExchange.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IReadOnlyList<CurrencyResponse>>> GetAll()
         {
             var rates = await _mediator.Send(new GetAllCurrenciesQuery());
