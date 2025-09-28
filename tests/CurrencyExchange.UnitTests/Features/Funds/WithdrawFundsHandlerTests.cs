@@ -13,7 +13,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
             var wallet = testFixture.AddWallet("W1");
             testFixture.AddFunds(wallet, "USD", 100m);
 
-            var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
+            var handler = new WithdrawFundsHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache);
 
             // act
             var result = await handler.Handle(new WithdrawFundsCommand(wallet.Id, "USD", 40m), CancellationToken.None);
@@ -29,7 +29,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
             var wallet = testFixture.AddWallet("W2");
             testFixture.AddFunds(wallet, "USD", 10m);
 
-            var handler = new WithdrawFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
+            var handler = new WithdrawFundsHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache);
 
             // assert
             await Should.ThrowAsync<DomainValidationException>(() =>

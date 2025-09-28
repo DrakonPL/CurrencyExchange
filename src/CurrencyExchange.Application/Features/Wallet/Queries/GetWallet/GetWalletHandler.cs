@@ -8,7 +8,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace CurrencyExchange.Application.Features.Wallet.Queries.GetWallet
 {
     public class GetWalletHandler(
-        IWalletRepository walletRepository,
+        IUnitOfWork unitOfWork,
         IMapper mapper,
         IMemoryCache memoryCache
         ) : IRequestHandler<GetWalletQuery, WalletDto>
@@ -19,7 +19,7 @@ namespace CurrencyExchange.Application.Features.Wallet.Queries.GetWallet
             {
                 entry.AbsoluteExpirationRelativeToNow = CacheKeys.CacheDuration;
 
-                var wallet = await walletRepository.Get(request.Id);
+                var wallet = await unitOfWork.WalletRepository.Get(request.Id);
                 return mapper.Map<WalletDto>(wallet);
             });
 

@@ -15,15 +15,12 @@ namespace CurrencyExchange.Infrastructure.Repositories
         public async Task<T> Add(T entity)
         {
             await _context.AddAsync(entity);
-            await _context.SaveChangesAsync();
-
             return entity;
         }
 
-        public async Task Delete(T entity)
+        public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
         }
 
         public virtual async Task<T> Get(int id)
@@ -39,10 +36,10 @@ namespace CurrencyExchange.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task Update(T entity)
+        public T Update(T entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            return entity;
         }
     }
 }

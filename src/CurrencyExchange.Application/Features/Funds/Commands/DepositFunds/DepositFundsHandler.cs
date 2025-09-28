@@ -8,19 +8,20 @@ using Microsoft.Extensions.Caching.Memory;
 namespace CurrencyExchange.Application.Features.Funds.Commands.DepositFunds
 {
     public class DepositFundsHandler(
-         IWalletRepository walletRepository,
-         ICurrencyRepository currencyRepository,
+         IUnitOfWork unitOfWork,
          IMapper mapper,
          IMemoryCache memoryCache
         ) : IRequestHandler<DepositFundsCommand, FundsDto>
     {
         public async Task<FundsDto> Handle(DepositFundsCommand request, CancellationToken cancellationToken)
         {
-            var wallet = await walletRepository.Get(request.WalletId);
-            var currency = await currencyRepository.GetByCode(request.CurrencyCode);
+            var wallet = await unitOfWork.WalletRepository.Get(request.WalletId);
+            var currency = await unitOfWork.CurrencyRepository.GetByCode(request.CurrencyCode);
 
             var funds = wallet.DepositFunds(currency, request.Amount);
-            await walletRepository.Update(wallet);
+            unitOfWork.WalletRepository.Update(wallet);
+
+            await unitOfWork.SaveAsync(cancellationToken);
 
             memoryCache.Remove(CacheKeys.WalletsAll);
             memoryCache.Remove(CacheKeys.WalletById(request.WalletId));

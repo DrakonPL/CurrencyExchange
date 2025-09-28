@@ -10,7 +10,7 @@ namespace CurrencyExchange.UnitTests.Features.Wallet
         {
             // arrange
             var wallet = testFixture.AddWallet("GW-OK");
-            var handler = new GetWalletHandler(testFixture.WalletRepository, testFixture.Mapper, testFixture.MemoryCache);
+            var handler = new GetWalletHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache);
 
             // act
             var dto = await handler.Handle(new GetWalletQuery(wallet.Id), CancellationToken.None);
@@ -27,14 +27,14 @@ namespace CurrencyExchange.UnitTests.Features.Wallet
         {
             // arrange
             var wallet = testFixture.AddWallet("GW-CACHE-1");
-            var handler = new GetWalletHandler(testFixture.WalletRepository, testFixture.Mapper, testFixture.MemoryCache);
+            var handler = new GetWalletHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache);
 
             // act
             var first = await handler.Handle(new GetWalletQuery(wallet.Id), CancellationToken.None);
 
             // mutate repository after first read
             wallet.Name = "GW-CACHE-UPDATED";
-            await testFixture.WalletRepository.Update(wallet);
+            testFixture.WalletRepository.Update(wallet);
 
             // second call should return cached DTO (old name)
             var second = await handler.Handle(new GetWalletQuery(wallet.Id), CancellationToken.None);

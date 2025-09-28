@@ -8,7 +8,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace CurrencyExchange.Application.Features.Currency.Queries.GetAllCurrencies
 {
     public class GetAllCurrenciesHandler(
-        ICurrencyRepository currencyRepository,
+        IUnitOfWork unitOfWork,
         IMapper mapper,
         IMemoryCache cache
         ) : IRequestHandler<GetAllCurrenciesQuery, List<CurrencyDto>>
@@ -22,7 +22,7 @@ namespace CurrencyExchange.Application.Features.Currency.Queries.GetAllCurrencie
             {
                 entry.AbsoluteExpirationRelativeToNow = _cacheDuration;
 
-                var currencies = await currencyRepository.GetAll();
+                var currencies = await unitOfWork.CurrencyRepository.GetAll();
                 return mapper.Map<List<CurrencyDto>>(currencies);
             });
 

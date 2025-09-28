@@ -4,6 +4,7 @@ using CurrencyExchange.Infrastructure;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Text.Json;
 
 namespace CurrencyExchange.Api
 {
@@ -27,7 +28,13 @@ namespace CurrencyExchange.Api
             builder.Services.ConfigureApplicationServices(builder.Configuration);
             builder.Services.ConfigureInfrastructureServices();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+            .AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                o.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+            });
+
             builder.Services.AddMemoryCache();
 
             builder.Services.AddEndpointsApiExplorer();
@@ -43,8 +50,6 @@ namespace CurrencyExchange.Api
 
             var app = builder.Build();
 
-            app.UseSerilogRequestLogging();
-
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
@@ -56,13 +61,13 @@ namespace CurrencyExchange.Api
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "CurrencyExchange API v1");
                     c.DisplayRequestDuration();
                 });
+
+                app.UseSerilogRequestLogging();
+                app.UseHttpLogging();
             }
 
             app.UseHttpsRedirection();
-            //app.UseHttpLogging();
-
             app.MapControllers();
-
             app.Run();
         }
     }

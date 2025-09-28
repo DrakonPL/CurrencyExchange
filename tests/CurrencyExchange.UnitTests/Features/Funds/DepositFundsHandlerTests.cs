@@ -10,7 +10,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
         {
             // arrange
             var wallet = testFixture.AddWallet("A");
-            var handler = new DepositFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
+            var handler = new DepositFundsHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache);
 
             // act
             var result = await handler.Handle(new DepositFundsCommand(wallet.Id, "USD", 50m), CancellationToken.None);
@@ -27,7 +27,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
             var wallet = testFixture.AddWallet("B");
             testFixture.AddFunds(wallet, "USD", 20m);
 
-            var handler = new DepositFundsHandler(testFixture.WalletRepository, testFixture.CurrencyRepository, testFixture.Mapper, testFixture.MemoryCache);
+            var handler = new DepositFundsHandler(testFixture.UnitOfWork, testFixture.Mapper, testFixture.MemoryCache);
 
             // act
             var result = await handler.Handle(new DepositFundsCommand(wallet.Id, "USD", 30m), CancellationToken.None);

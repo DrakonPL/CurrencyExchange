@@ -21,6 +21,8 @@ namespace CurrencyExchange.UnitTests
 
 
         public CurrencyExchangeDbContext Context { get; }
+
+        public IUnitOfWork UnitOfWork { get; }
         public IWalletRepository WalletRepository { get; }
         public ICurrencyRepository CurrencyRepository { get; }
         public IFundsRepository FundsRepository { get; }
@@ -38,9 +40,14 @@ namespace CurrencyExchange.UnitTests
             Context = new CurrencyExchangeDbContext(options);
             Context.Database.EnsureCreated();
 
-            CurrencyRepository = new CurrencyRepository(Context);
-            WalletRepository = new WalletRepository(Context);
-            FundsRepository = new FundsRepository(Context);
+            UnitOfWork = new UnitOfWork(Context,
+                new CurrencyRepository(Context),
+                new WalletRepository(Context),
+                new FundsRepository(Context));
+
+            CurrencyRepository = UnitOfWork.CurrencyRepository;
+            WalletRepository = UnitOfWork.WalletRepository;
+            FundsRepository = UnitOfWork.FundsRepository;
 
             var mapperCfg = new MapperConfiguration(cfg =>
             {
@@ -68,7 +75,7 @@ namespace CurrencyExchange.UnitTests
 
         public Currency AddCurrency(string code, string name, decimal rate)
         {
-            var c = new Currency { Code = code, Name = name, Rate = rate };
+            var c = new Currency (code, name, rate);
             Context.Currencies.Add(c);
             return c;
         }

@@ -9,8 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
 {
     public class ExchangeFundsHandler(
-        IWalletRepository walletRepository,
-        ICurrencyRepository currencyRepository,
+        IUnitOfWork unitOfWork,
         ICurrencyConverter currencyConverter,
         IMapper mapper,
         IMemoryCache memoryCache
@@ -18,9 +17,9 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
     {
         public async Task<FundsDto> Handle(ExchangeFundsCommand request, CancellationToken cancellationToken)
         {
-            var wallet = await walletRepository.Get(request.WalletId);
-            var fromCurrency = await currencyRepository.GetByCode(request.FromCurrencyCode);
-            var toCurrency = await currencyRepository.GetByCode(request.ToCurrencyCode);
+            var wallet = await unitOfWork.WalletRepository.Get(request.WalletId);
+            var fromCurrency = await unitOfWork.CurrencyRepository.GetByCode(request.FromCurrencyCode);
+            var toCurrency = await unitOfWork.CurrencyRepository.GetByCode(request.ToCurrencyCode);
 
             wallet.WithdrawFunds(fromCurrency, request.Amount);
 
@@ -32,8 +31,9 @@ namespace CurrencyExchange.Application.Features.Funds.Commands.ExchangeFunds
             );
 
             var funds = wallet.DepositFunds(toCurrency, exchangedAmount);
+            unitOfWork.WalletRepository.Update(wallet);
 
-            await walletRepository.Update(wallet);
+            await unitOfWork.SaveAsync(cancellationToken);
 
             memoryCache.Remove(CacheKeys.WalletsAll);
             memoryCache.Remove(CacheKeys.WalletById(request.WalletId));

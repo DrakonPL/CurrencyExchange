@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet
 {
     public class CreateWalletHandler(
-            IWalletRepository walletRepository,
+            IUnitOfWork unitOfWork,
             IMemoryCache memoryCache
         ) : IRequestHandler<CreateWalletCommand, int>
     {
@@ -17,7 +17,9 @@ namespace CurrencyExchange.Application.Features.Wallet.Commands.CreateWallet
                 Name = request.Name
             };
 
-            wallet = await walletRepository.Add(wallet);
+            wallet = await unitOfWork.WalletRepository.Add(wallet);            
+            await unitOfWork.SaveAsync(cancellationToken);
+
             memoryCache.Remove(CacheKeys.WalletsAll);
 
             return wallet.Id;

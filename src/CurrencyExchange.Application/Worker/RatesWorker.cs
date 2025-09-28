@@ -66,7 +66,8 @@ namespace CurrencyExchange.Application.Worker
         {
             using var scope = scopeFactory.CreateScope();
             var nbpClient = scope.ServiceProvider.GetRequiredService<NbpClient>();
-            var currencyRepository = scope.ServiceProvider.GetRequiredService<ICurrencyRepository>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var currencyRepository = unitOfWork.CurrencyRepository;
 
             var tables = await nbpClient.GetTableBAsync(ct);
 
@@ -81,19 +82,13 @@ namespace CurrencyExchange.Application.Worker
                         var currency = await currencyRepository.GetByCode(r.Code);
                         if (currency == null)
                         {
-                            var newCurrency = new Currency
-                            {
-                                Code = r.Code,
-                                Name = r.Currency,
-                                Rate = r.Mid,
-                            };
-                            await currencyRepository.Add(newCurrency);
+                            await currencyRepository.Add(new Currency(r.Code, r.Currency, r.Mid));
                             added++;
                         }
                         else
                         {
-                            currency.Rate = r.Mid;
-                            await currencyRepository.Update(currency);
+                            currency.UpdateRate(r.Mid);
+                            currencyRepository.Update(currency);
                             updated++;
                         }
                     }
@@ -109,6 +104,8 @@ namespace CurrencyExchange.Application.Worker
                     }
                 }
             }
+
+            await unitOfWork.SaveAsync(ct);
 
             memoryCache.Remove(CacheKeys.CurrenciesAll);
             logger.LogInformation("Rates fetch complete. Added: {Added}, Updated: {Updated}, Failed: {Failed}.", added, updated, failed);

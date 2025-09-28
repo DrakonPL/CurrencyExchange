@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CurrencyExchange.Infrastructure
 {
-    public static class InfrastructureRegistraction
+    public static class InfrastructureRegistration
     {
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services)
         {
@@ -14,6 +14,8 @@ namespace CurrencyExchange.Infrastructure
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<ICurrencyRepository, CurrencyRepository>();
             services.AddScoped<IFundsRepository, FundsRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

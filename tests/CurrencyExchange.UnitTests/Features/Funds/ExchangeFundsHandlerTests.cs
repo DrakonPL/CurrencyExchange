@@ -14,8 +14,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
             testFixture.AddFunds(wallet, "USD", 5m);
 
             var handler = new ExchangeFundsHandler(
-                testFixture.WalletRepository,
-                testFixture.CurrencyRepository,
+                testFixture.UnitOfWork,
                 testFixture.CurrencyConverter,
                 testFixture.Mapper,
                 testFixture.MemoryCache);
@@ -32,8 +31,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
             testFixture.AddFunds(wallet, "USD", 100m);
 
             var handler = new ExchangeFundsHandler(
-                testFixture.WalletRepository,
-                testFixture.CurrencyRepository,
+                testFixture.UnitOfWork,
                 testFixture.CurrencyConverter,
                 testFixture.Mapper,
                 testFixture.MemoryCache);
@@ -57,8 +55,7 @@ namespace CurrencyExchange.UnitTests.Features.Funds
             testFixture.AddFunds(wallet, "EUR", 10m);
 
             var handler = new ExchangeFundsHandler(
-                testFixture.WalletRepository,
-                testFixture.CurrencyRepository,
+                testFixture.UnitOfWork,
                 testFixture.CurrencyConverter,
                 testFixture.Mapper,
                 testFixture.MemoryCache);
